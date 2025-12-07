@@ -279,11 +279,15 @@
             margin: 5px 0;
         }
 
-        /* Side Panel */
-        .side-panel {
+        /* Side Panels */
+        .left-panel, .side-panel {
             display: flex;
             flex-direction: column;
             gap: 20px;
+        }
+
+        .left-panel {
+            min-width: 250px;
         }
 
         /* Leaderboard, Settings & Daily Challenge */
@@ -864,19 +868,20 @@
             gap: 10px;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 1200px) {
             .main-container {
                 flex-direction: column;
                 align-items: center;
             }
 
-            .side-panel {
+            .left-panel, .side-panel {
                 flex-direction: row;
                 flex-wrap: wrap;
                 justify-content: center;
+                width: 100%;
             }
 
-            .leaderboard, .settings {
+            .leaderboard, .settings, .daily-challenge {
                 width: 100%;
                 max-width: 350px;
             }
@@ -912,6 +917,15 @@
 </head>
 <body>
     <div class="main-container">
+        <div class="left-panel">
+            <div class="leaderboard">
+                <h2>Global Leaderboard</h2>
+                <ul class="leaderboard-list" id="leaderboardList">
+                    <li class="loading">Loading...</li>
+                </ul>
+            </div>
+        </div>
+
         <div class="game-container">
             <div class="header">
                 <h1>SNAKE</h1>
@@ -1065,12 +1079,6 @@
                 </div>
             </div>
 
-            <div class="leaderboard">
-                <h2>Global Leaderboard</h2>
-                <ul class="leaderboard-list" id="leaderboardList">
-                    <li class="loading">Loading...</li>
-                </ul>
-            </div>
         </div>
     </div>
 
