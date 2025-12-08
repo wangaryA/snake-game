@@ -763,13 +763,13 @@
 
         .canvas-wrapper {
             position: relative;
-            display: inline-flex;
+            display: inline-block;
             border: 2px solid var(--primary);
             border-radius: 14px;
             box-shadow:
                 0 25px 80px rgba(0, 0, 0, 0.6),
                 0 0 40px var(--primary-dim);
-            overflow: hidden;
+            line-height: 0;
         }
 
         .canvas-wrapper::before {
@@ -2084,6 +2084,12 @@
             <div class="active-powerups" id="activePowerups"></div>
             <div class="canvas-wrapper">
                 <canvas id="gameCanvas" width="400" height="400"></canvas>
+                <div class="game-over" id="gameOver">
+                    <h2>Game Over!</h2>
+                    <p>Final Score: <span id="finalScore">0</span></p>
+                    <p class="new-record" id="newRecord" style="display: none;">New Personal Best!</p>
+                    <button class="restart-btn" id="restartBtn">Play Again</button>
+                </div>
             </div>
             <div class="controls">
                 <p>Use Arrow Keys or WASD to move</p>
@@ -2104,12 +2110,6 @@
                     <button class="mobile-btn" id="downBtn">&#9660;</button>
                     <button class="mobile-btn" id="rightBtn">&#9654;</button>
                 </div>
-            </div>
-            <div class="game-over" id="gameOver">
-                <h2>Game Over!</h2>
-                <p>Final Score: <span id="finalScore">0</span></p>
-                <p class="new-record" id="newRecord" style="display: none;">New Personal Best!</p>
-                <button class="restart-btn" id="restartBtn">Play Again</button>
             </div>
         </div>
 
