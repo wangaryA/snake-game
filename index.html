@@ -4723,9 +4723,18 @@
 
         // Create multiplayer room
         async function createMultiplayerRoom(maxPlayers) {
+            if (!rtdb) {
+                alert('Multiplayer is not available. Please refresh and try again.');
+                console.error('rtdb is null - Firebase Realtime Database not initialized');
+                return;
+            }
+
             try {
+                console.log('Creating multiplayer room...');
                 const gameRef = push(ref(rtdb, 'games'));
-                const gameId = gameRef.key.substring(0, 6).toUpperCase(); // Short room code
+                // Generate a cleaner room code (skip the leading '-' in push keys)
+                const gameId = gameRef.key.substring(1, 7).toUpperCase(); // Short room code
+                console.log('Generated room code:', gameId);
 
                 const displayName = customUsername || currentUser.displayName || 'Player';
                 const colorIndex = 0;
@@ -4780,8 +4789,17 @@
 
         // Join multiplayer room
         async function joinMultiplayerRoom(gameId) {
+            if (!rtdb) {
+                alert('Multiplayer is not available. Please refresh and try again.');
+                console.error('rtdb is null - Firebase Realtime Database not initialized');
+                return;
+            }
+
+            console.log('Attempting to join room:', gameId);
+
             try {
                 const gameSnapshot = await get(ref(rtdb, `games/${gameId}`));
+                console.log('Room lookup result:', gameSnapshot.exists() ? 'found' : 'not found');
 
                 if (!gameSnapshot.exists()) {
                     alert('Room not found. Please check the code and try again.');
@@ -4789,6 +4807,7 @@
                 }
 
                 const gameData = gameSnapshot.val();
+                console.log('Room data:', gameData);
 
                 if (gameData.status !== 'waiting') {
                     alert('This game has already started.');
@@ -4823,9 +4842,10 @@
                 myPlayerColor = PLAYER_COLORS[colorIndex];
 
                 const displayName = customUsername || currentUser.displayName || 'Player';
+                console.log('Joining as:', displayName, 'with UID:', currentUser.uid);
 
                 // Add player to room
-                await set(ref(rtdb, `games/${gameId}/players/${currentUser.uid}`), {
+                const playerData = {
                     name: displayName,
                     color: myPlayerColor,
                     colorIndex: colorIndex,
@@ -4836,7 +4856,16 @@
                     alive: true,
                     ready: false,
                     isHost: false
-                });
+                };
+
+                try {
+                    await set(ref(rtdb, `games/${gameId}/players/${currentUser.uid}`), playerData);
+                    console.log('Successfully added player to room');
+                } catch (writeError) {
+                    console.error('Failed to write player data:', writeError);
+                    alert('Failed to join room. Firebase permissions may not be configured. Check console for details.');
+                    return;
+                }
 
                 currentGameId = gameId;
                 isHost = false;
@@ -4926,20 +4955,27 @@
 
         // Listen to game state changes
         function listenToGameState(gameId) {
+            console.log('Setting up listener for room:', gameId);
+
             if (gameStateListener) {
                 // Remove previous listener
+                console.log('Removing previous listener');
                 gameStateListener();
             }
 
             gameStateListener = onValue(ref(rtdb, `games/${gameId}`), (snapshot) => {
+                console.log('Game state update received');
+
                 if (!snapshot.exists()) {
                     // Room was deleted
+                    console.log('Room no longer exists');
                     closeLobby();
                     alert('The room has been closed.');
                     return;
                 }
 
                 const gameData = snapshot.val();
+                console.log('Game state:', gameData.status, 'Players:', Object.keys(gameData.players || {}).length);
 
                 if (gameData.status === 'waiting') {
                     updateLobbyPlayers(gameData.players);
@@ -4960,6 +4996,8 @@
                         food = gameData.food;
                     }
                 }
+            }, (error) => {
+                console.error('Listener error:', error);
             });
         }
 
