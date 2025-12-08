@@ -23,6 +23,106 @@
             --bg-card: rgba(15, 15, 35, 0.8);
             --glass: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
+            --bg-gradient: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 50%, #0a0a1a 100%);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --canvas-bg: linear-gradient(180deg, #0d0d1a 0%, #0a0a15 100%);
+            --grid-color: rgba(255, 255, 255, 0.03);
+        }
+
+        /* ===== THEME: Neon Cyberpunk (Default) ===== */
+        [data-theme="neon"] {
+            --primary: #00ff88;
+            --primary-dim: rgba(0, 255, 136, 0.3);
+            --secondary: #00d4ff;
+            --accent: #ff0055;
+            --accent-orange: #ff6600;
+            --gold: #ffd700;
+            --bg-dark: #0a0a1a;
+            --bg-card: rgba(15, 15, 35, 0.8);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --bg-gradient: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 50%, #0a0a1a 100%);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --canvas-bg: linear-gradient(180deg, #0d0d1a 0%, #0a0a15 100%);
+            --grid-color: rgba(255, 255, 255, 0.03);
+        }
+
+        /* ===== THEME: Retro Arcade ===== */
+        [data-theme="retro"] {
+            --primary: #ffcc00;
+            --primary-dim: rgba(255, 204, 0, 0.3);
+            --secondary: #ff6b35;
+            --accent: #e83f6f;
+            --accent-orange: #ff9f1c;
+            --gold: #ffd700;
+            --bg-dark: #1a1a2e;
+            --bg-card: rgba(30, 30, 60, 0.9);
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 204, 0, 0.2);
+            --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --canvas-bg: linear-gradient(180deg, #0f0f23 0%, #1a1a2e 100%);
+            --grid-color: rgba(255, 204, 0, 0.05);
+        }
+
+        /* ===== THEME: Ocean Blue ===== */
+        [data-theme="ocean"] {
+            --primary: #00b4d8;
+            --primary-dim: rgba(0, 180, 216, 0.3);
+            --secondary: #90e0ef;
+            --accent: #ff6b6b;
+            --accent-orange: #48cae4;
+            --gold: #ffd700;
+            --bg-dark: #03045e;
+            --bg-card: rgba(3, 4, 94, 0.8);
+            --glass: rgba(144, 224, 239, 0.05);
+            --glass-border: rgba(0, 180, 216, 0.2);
+            --bg-gradient: linear-gradient(135deg, #03045e 0%, #023e8a 50%, #0077b6 100%);
+            --text-primary: #caf0f8;
+            --text-secondary: rgba(202, 240, 248, 0.7);
+            --canvas-bg: linear-gradient(180deg, #023e8a 0%, #03045e 100%);
+            --grid-color: rgba(0, 180, 216, 0.05);
+        }
+
+        /* ===== THEME: Nature/Forest ===== */
+        [data-theme="forest"] {
+            --primary: #80b918;
+            --primary-dim: rgba(128, 185, 24, 0.3);
+            --secondary: #55a630;
+            --accent: #d00000;
+            --accent-orange: #aacc00;
+            --gold: #ffd700;
+            --bg-dark: #1b2a1b;
+            --bg-card: rgba(27, 42, 27, 0.9);
+            --glass: rgba(128, 185, 24, 0.05);
+            --glass-border: rgba(128, 185, 24, 0.2);
+            --bg-gradient: linear-gradient(135deg, #1b2a1b 0%, #2d4a2d 50%, #1b2a1b 100%);
+            --text-primary: #e8f5e9;
+            --text-secondary: rgba(232, 245, 233, 0.7);
+            --canvas-bg: linear-gradient(180deg, #1b2a1b 0%, #2d4a2d 100%);
+            --grid-color: rgba(128, 185, 24, 0.05);
+        }
+
+        /* ===== THEME: Sunset/Warm ===== */
+        [data-theme="sunset"] {
+            --primary: #f72585;
+            --primary-dim: rgba(247, 37, 133, 0.3);
+            --secondary: #7209b7;
+            --accent: #4cc9f0;
+            --accent-orange: #f77f00;
+            --gold: #ffd700;
+            --bg-dark: #2b1055;
+            --bg-card: rgba(43, 16, 85, 0.9);
+            --glass: rgba(247, 37, 133, 0.05);
+            --glass-border: rgba(247, 37, 133, 0.2);
+            --bg-gradient: linear-gradient(135deg, #2b1055 0%, #4a1a7a 50%, #7b2cbf 100%);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --canvas-bg: linear-gradient(180deg, #3a0ca3 0%, #2b1055 100%);
+            --grid-color: rgba(247, 37, 133, 0.05);
         }
 
         /* ===== LOADING SCREEN ===== */
@@ -1118,6 +1218,138 @@
             margin-top: 12px;
         }
 
+        /* ===== THEME SELECTOR ===== */
+        .theme-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .theme-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: var(--glass);
+            border: 2px solid var(--glass-border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .theme-btn:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .theme-btn.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-dim);
+        }
+
+        .theme-preview {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-preview-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: 10px 10px;
+            opacity: 0.3;
+        }
+
+        .theme-preview-snake {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 30px;
+            height: 6px;
+            border-radius: 3px;
+        }
+
+        /* Theme preview colors */
+        .neon-preview {
+            background: linear-gradient(135deg, #0a0a1a, #1a1a3e);
+        }
+        .neon-preview .theme-preview-grid {
+            background-image: linear-gradient(rgba(0, 255, 136, 0.1) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 255, 136, 0.1) 1px, transparent 1px);
+        }
+        .neon-preview .theme-preview-snake {
+            background: linear-gradient(90deg, #00ff88, #00d4ff);
+            box-shadow: 0 0 10px #00ff88;
+        }
+
+        .retro-preview {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+        }
+        .retro-preview .theme-preview-grid {
+            background-image: linear-gradient(rgba(255, 204, 0, 0.1) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 204, 0, 0.1) 1px, transparent 1px);
+        }
+        .retro-preview .theme-preview-snake {
+            background: linear-gradient(90deg, #ffcc00, #ff6b35);
+            box-shadow: 0 0 10px #ffcc00;
+        }
+
+        .ocean-preview {
+            background: linear-gradient(135deg, #03045e, #023e8a);
+        }
+        .ocean-preview .theme-preview-grid {
+            background-image: linear-gradient(rgba(0, 180, 216, 0.1) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 180, 216, 0.1) 1px, transparent 1px);
+        }
+        .ocean-preview .theme-preview-snake {
+            background: linear-gradient(90deg, #00b4d8, #90e0ef);
+            box-shadow: 0 0 10px #00b4d8;
+        }
+
+        .forest-preview {
+            background: linear-gradient(135deg, #1b2a1b, #2d4a2d);
+        }
+        .forest-preview .theme-preview-grid {
+            background-image: linear-gradient(rgba(128, 185, 24, 0.1) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(128, 185, 24, 0.1) 1px, transparent 1px);
+        }
+        .forest-preview .theme-preview-snake {
+            background: linear-gradient(90deg, #80b918, #55a630);
+            box-shadow: 0 0 10px #80b918;
+        }
+
+        .sunset-preview {
+            background: linear-gradient(135deg, #2b1055, #4a1a7a);
+        }
+        .sunset-preview .theme-preview-grid {
+            background-image: linear-gradient(rgba(247, 37, 133, 0.1) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(247, 37, 133, 0.1) 1px, transparent 1px);
+        }
+        .sunset-preview .theme-preview-snake {
+            background: linear-gradient(90deg, #f72585, #7209b7);
+            box-shadow: 0 0 10px #f72585;
+        }
+
+        .theme-name {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .theme-btn.active .theme-name {
+            color: var(--primary);
+        }
+
         /* ===== SKIN SELECTOR ===== */
         .skin-options {
             display: grid;
@@ -1866,6 +2098,47 @@
                 <p class="settings-note">Changes require game restart</p>
 
                 <div class="setting-group">
+                    <label class="setting-label">Game Theme</label>
+                    <div class="theme-selector">
+                        <button class="theme-btn active" data-theme="neon" title="Neon Cyberpunk">
+                            <div class="theme-preview neon-preview">
+                                <div class="theme-preview-grid"></div>
+                                <div class="theme-preview-snake"></div>
+                            </div>
+                            <span class="theme-name">Neon</span>
+                        </button>
+                        <button class="theme-btn" data-theme="retro" title="Retro Arcade">
+                            <div class="theme-preview retro-preview">
+                                <div class="theme-preview-grid"></div>
+                                <div class="theme-preview-snake"></div>
+                            </div>
+                            <span class="theme-name">Retro</span>
+                        </button>
+                        <button class="theme-btn" data-theme="ocean" title="Ocean Blue">
+                            <div class="theme-preview ocean-preview">
+                                <div class="theme-preview-grid"></div>
+                                <div class="theme-preview-snake"></div>
+                            </div>
+                            <span class="theme-name">Ocean</span>
+                        </button>
+                        <button class="theme-btn" data-theme="forest" title="Nature Forest">
+                            <div class="theme-preview forest-preview">
+                                <div class="theme-preview-grid"></div>
+                                <div class="theme-preview-snake"></div>
+                            </div>
+                            <span class="theme-name">Forest</span>
+                        </button>
+                        <button class="theme-btn" data-theme="sunset" title="Sunset Warm">
+                            <div class="theme-preview sunset-preview">
+                                <div class="theme-preview-grid"></div>
+                                <div class="theme-preview-snake"></div>
+                            </div>
+                            <span class="theme-name">Sunset</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="setting-group">
                     <label class="setting-label">Snake Skin</label>
                     <div class="skin-options">
                         <button class="skin-btn active" data-skin="neon" title="Neon Green">
@@ -2565,6 +2838,23 @@
                 draw();
                 // Achievement for changing skin
                 if (wasDifferent) checkAchievement('skin_change');
+            });
+        });
+
+        // Theme selector
+        let currentTheme = localStorage.getItem('snakeTheme') || 'neon';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        document.querySelector(`[data-theme="${currentTheme}"]`)?.classList.add('active');
+
+        document.querySelectorAll('.theme-btn[data-theme]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.theme-btn[data-theme]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentTheme = btn.dataset.theme;
+                document.documentElement.setAttribute('data-theme', currentTheme);
+                localStorage.setItem('snakeTheme', currentTheme);
+                // Redraw to update canvas colors
+                draw();
             });
         });
 
