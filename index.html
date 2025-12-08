@@ -1323,6 +1323,167 @@
             transform: translateY(0) scale(0.98);
         }
 
+        /* Username Modal */
+        .username-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .username-modal.show {
+            display: flex;
+        }
+
+        .username-modal-content {
+            background: var(--bg-card);
+            backdrop-filter: blur(30px);
+            padding: 40px 50px;
+            border-radius: 25px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 100px var(--primary-dim);
+            animation: modal-appear 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .username-modal-content h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .username-modal-content p {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        .username-modal-content input {
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 1.1rem;
+            font-family: 'Rajdhani', sans-serif;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--glass-border);
+            border-radius: 12px;
+            color: #fff;
+            outline: none;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+        }
+
+        .username-modal-content input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-dim);
+        }
+
+        .username-modal-content input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .username-modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .username-btn {
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Rajdhani', sans-serif;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+        }
+
+        .username-btn.cancel {
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .username-btn.cancel:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .username-btn.save {
+            background: linear-gradient(135deg, var(--primary), #00cc6a);
+            color: var(--bg-dark);
+        }
+
+        .username-btn.save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--primary-dim);
+        }
+
+        /* Edit Username Button in User Info */
+        .edit-username-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            padding: 4px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .edit-username-btn:hover {
+            color: var(--primary);
+        }
+
+        /* Leaderboard Game Settings */
+        .player-settings {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 3px;
+        }
+
+        .setting-badge {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .setting-badge.mode {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--primary);
+        }
+
+        .setting-badge.speed {
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--secondary);
+        }
+
+        .setting-badge.size {
+            background: rgba(255, 102, 0, 0.2);
+            color: var(--accent-orange);
+        }
+
+        .setting-badge.obstacles {
+            background: rgba(255, 0, 85, 0.2);
+            color: var(--accent);
+        }
+
         /* Achievement Popup */
         .achievement-popup {
             position: fixed;
@@ -1768,6 +1929,19 @@
         </div>
     </div>
 
+    <!-- Username Modal -->
+    <div class="username-modal" id="usernameModal">
+        <div class="username-modal-content">
+            <h2>Set Your Username</h2>
+            <p>Choose a display name for the leaderboard</p>
+            <input type="text" id="usernameInput" placeholder="Enter username" maxlength="20">
+            <div class="username-modal-buttons">
+                <button class="username-btn cancel" id="usernameCancel">Cancel</button>
+                <button class="username-btn save" id="usernameSave">Save</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Achievement Popup -->
     <div class="achievement-popup" id="achievementPopup">
         <div class="achievement-icon">🏆</div>
@@ -1821,6 +1995,13 @@
         const authContainer = document.getElementById('authContainer');
         const leaderboardList = document.getElementById('leaderboardList');
         const activePowerupsEl = document.getElementById('activePowerups');
+        const usernameModal = document.getElementById('usernameModal');
+        const usernameInput = document.getElementById('usernameInput');
+        const usernameSaveBtn = document.getElementById('usernameSave');
+        const usernameCancelBtn = document.getElementById('usernameCancel');
+
+        // Custom username
+        let customUsername = null;
 
         // Settings
         const speedSettings = { slow: 150, normal: 100, fast: 60, insane: 35 };
@@ -2531,6 +2712,73 @@
             activePowerupsEl.innerHTML = html;
         }
 
+        // Username functions
+        window.openUsernameModal = function() {
+            usernameInput.value = customUsername || '';
+            usernameModal.classList.add('show');
+            usernameInput.focus();
+        };
+
+        window.closeUsernameModal = function() {
+            usernameModal.classList.remove('show');
+        };
+
+        window.saveUsername = async function() {
+            const newUsername = usernameInput.value.trim();
+            if (newUsername && newUsername.length >= 2 && newUsername.length <= 20) {
+                customUsername = newUsername;
+
+                // Update display name in UI
+                const userNameEl = document.querySelector('.user-name');
+                if (userNameEl) {
+                    userNameEl.textContent = customUsername;
+                }
+
+                // Save to Firebase if user is logged in
+                if (currentUser) {
+                    try {
+                        const userRef = doc(db, 'users', currentUser.uid);
+                        await setDoc(userRef, { customUsername: customUsername }, { merge: true });
+
+                        // Also update the scores collection if user has a score
+                        const scoreRef = doc(db, 'scores', currentUser.uid);
+                        const scoreDoc = await getDoc(scoreRef);
+                        if (scoreDoc.exists()) {
+                            await setDoc(scoreRef, { displayName: customUsername }, { merge: true });
+                            loadLeaderboard();
+                        }
+                    } catch (error) {
+                        console.error("Error saving username:", error);
+                    }
+                }
+
+                closeUsernameModal();
+            }
+        };
+
+        // Load custom username on auth state change
+        async function loadCustomUsername() {
+            if (!currentUser) return;
+            try {
+                const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+                if (userDoc.exists() && userDoc.data().customUsername) {
+                    customUsername = userDoc.data().customUsername;
+                }
+            } catch (error) {
+                console.error("Error loading custom username:", error);
+            }
+        }
+
+        // Username modal event listeners
+        usernameSaveBtn.addEventListener('click', saveUsername);
+        usernameCancelBtn.addEventListener('click', closeUsernameModal);
+        usernameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') saveUsername();
+        });
+        usernameModal.addEventListener('click', (e) => {
+            if (e.target === usernameModal) closeUsernameModal();
+        });
+
         // Fullscreen function
         window.toggleFullscreen = function() {
             const gameContainer = document.querySelector('.game-container');
@@ -2597,15 +2845,25 @@
         onAuthStateChanged(auth, async (user) => {
             currentUser = user;
             if (user) {
+                // Load custom username first
+                await loadCustomUsername();
+                const displayName = customUsername || user.displayName || 'Player';
+
                 authContainer.innerHTML = `
                     <div class="user-info">
                         <img class="user-avatar" src="${user.photoURL || 'https://via.placeholder.com/40'}" alt="avatar">
-                        <span class="user-name">${user.displayName || 'Player'}</span>
+                        <span class="user-name">${displayName}</span>
+                        <button class="edit-username-btn" onclick="openUsernameModal()" title="Edit username">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                            </svg>
+                        </button>
                         <button class="auth-btn sign-out" onclick="signOutUser()">Sign Out</button>
                     </div>
                 `;
                 await loadPersonalBest();
             } else {
+                customUsername = null;
                 authContainer.innerHTML = `
                     <button class="auth-btn" onclick="signIn()">
                         <svg class="google-icon" viewBox="0 0 24 24" style="width:18px;height:18px">
@@ -2656,9 +2914,15 @@
                 if (newScore > currentBest) {
                     await setDoc(userRef, {
                         score: newScore,
-                        displayName: currentUser.displayName || 'Anonymous',
+                        displayName: customUsername || currentUser.displayName || 'Anonymous',
                         photoURL: currentUser.photoURL || '',
-                        updatedAt: new Date()
+                        updatedAt: new Date(),
+                        gameSettings: {
+                            mode: currentMode,
+                            speed: currentSpeed,
+                            size: currentSize,
+                            obstacles: obstaclesEnabled
+                        }
                     });
                     personalBest = newScore;
                     highScoreEl.textContent = personalBest;
@@ -2688,12 +2952,27 @@
                     const isCurrentUser = currentUser && doc.id === currentUser.uid;
                     const rankClass = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : 'normal';
 
+                    // Build settings badges HTML
+                    let settingsHtml = '';
+                    if (data.gameSettings) {
+                        const gs = data.gameSettings;
+                        settingsHtml = `
+                            <div class="player-settings">
+                                <span class="setting-badge mode">${gs.mode || 'classic'}</span>
+                                <span class="setting-badge speed">${gs.speed || 'normal'}</span>
+                                <span class="setting-badge size">${gs.size || 'medium'}</span>
+                                ${gs.obstacles ? '<span class="setting-badge obstacles">obstacles</span>' : ''}
+                            </div>
+                        `;
+                    }
+
                     leaderboardList.innerHTML += `
                         <li class="leaderboard-item ${isCurrentUser ? 'current-user' : ''}">
                             <span class="rank ${rankClass}">#${rank}</span>
                             <img class="player-avatar" src="${data.photoURL || 'https://via.placeholder.com/32'}" alt="">
                             <div class="player-info">
                                 <div class="player-name">${data.displayName || 'Anonymous'}</div>
+                                ${settingsHtml}
                             </div>
                             <span class="player-score">${data.score}</span>
                         </li>
