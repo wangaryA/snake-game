@@ -1222,10 +1222,15 @@
             border-radius: 25px;
             border: 1px solid var(--glass-border);
             display: none;
-            z-index: 100;
+            z-index: 1000;
             text-align: center;
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 100px rgba(255, 0, 85, 0.2);
             animation: modal-appear 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .game-container:fullscreen .game-over,
+        .game-container:-webkit-full-screen .game-over {
+            position: absolute;
         }
 
         .game-over::before {
@@ -1641,6 +1646,12 @@
                     <button class="mobile-btn" id="rightBtn">&#9654;</button>
                 </div>
             </div>
+            <div class="game-over" id="gameOver">
+                <h2>Game Over!</h2>
+                <p>Final Score: <span id="finalScore">0</span></p>
+                <p class="new-record" id="newRecord" style="display: none;">New Personal Best!</p>
+                <button class="restart-btn" id="restartBtn">Play Again</button>
+            </div>
         </div>
 
         <div class="side-panel">
@@ -1755,13 +1766,6 @@
             </div>
 
         </div>
-    </div>
-
-    <div class="game-over" id="gameOver">
-        <h2>Game Over!</h2>
-        <p>Final Score: <span id="finalScore">0</span></p>
-        <p class="new-record" id="newRecord" style="display: none;">New Personal Best!</p>
-        <button class="restart-btn" id="restartBtn">Play Again</button>
     </div>
 
     <!-- Achievement Popup -->
