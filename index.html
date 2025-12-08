@@ -2007,6 +2007,44 @@
             color: rgba(255, 255, 255, 0.5);
         }
 
+        .mp-kick-btn {
+            background: rgba(255, 68, 68, 0.2);
+            border: 1px solid rgba(255, 68, 68, 0.4);
+            color: #ff4444;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+
+        .mp-kick-btn:hover {
+            background: rgba(255, 68, 68, 0.4);
+        }
+
+        .spectator-leave-btn {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ff4444, #cc3333);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            z-index: 1001;
+            transition: all 0.2s;
+        }
+
+        .spectator-leave-btn:hover {
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
+        }
+
         .mp-lobby-actions {
             display: flex;
             gap: 10px;
@@ -4934,6 +4972,7 @@
                     <span class="mp-player-ready ${player.ready ? 'ready' : 'waiting'}">
                         ${player.ready ? 'Ready' : 'Waiting'}
                     </span>
+                    ${isHost && !player.isHost ? `<button class="mp-kick-btn" onclick="kickPlayer('${playerId}')">Kick</button>` : ''}
                 </div>
             `).join('');
 
@@ -5000,6 +5039,48 @@
                 console.error('Listener error:', error);
             });
         }
+
+        // Kick player (host only)
+        async function kickPlayer(playerId) {
+            if (!isHost || !currentGameId || !rtdb) return;
+
+            try {
+                await remove(ref(rtdb, `games/${currentGameId}/players/${playerId}`));
+                console.log('Kicked player:', playerId);
+            } catch (error) {
+                console.error('Error kicking player:', error);
+            }
+        }
+
+        // Make kickPlayer available globally for onclick
+        window.kickPlayer = kickPlayer;
+
+        // Leave multiplayer game
+        async function leaveMultiplayerGame() {
+            if (!currentGameId || !currentUser || !rtdb) return;
+
+            try {
+                // Remove player from game
+                await remove(ref(rtdb, `games/${currentGameId}/players/${currentUser.uid}`));
+
+                // If host, delete the entire game
+                if (isHost) {
+                    await remove(ref(rtdb, `games/${currentGameId}`));
+                }
+
+                // Clean up local state
+                cleanupMultiplayer();
+
+                // Reload to reset everything
+                window.location.reload();
+            } catch (error) {
+                console.error('Error leaving game:', error);
+                window.location.reload();
+            }
+        }
+
+        // Make leaveMultiplayerGame available globally
+        window.leaveMultiplayerGame = leaveMultiplayerGame;
 
         // Toggle ready status
         if (mpReadyBtn) {
@@ -5167,27 +5248,37 @@
             }
         }
 
-        // Update multiplayer HUD
+        // Track last HUD state to prevent unnecessary updates
+        let lastHudState = { lives: -1, scores: '' };
+
+        // Update multiplayer HUD (throttled)
         function updateMpHud(players) {
             if (!players) return;
 
-            // Update lives display
-            mpLivesDisplay.innerHTML = '';
-            for (let i = 0; i < 3; i++) {
-                const heart = document.createElement('span');
-                heart.className = `mp-life-heart ${i >= playerLives ? 'lost' : ''}`;
-                heart.textContent = '❤️';
-                heart.style.color = myPlayerColor;
-                mpLivesDisplay.appendChild(heart);
+            // Only update lives if changed
+            if (lastHudState.lives !== playerLives) {
+                lastHudState.lives = playerLives;
+                mpLivesDisplay.innerHTML = '';
+                for (let i = 0; i < 3; i++) {
+                    const heart = document.createElement('span');
+                    heart.className = `mp-life-heart ${i >= playerLives ? 'lost' : ''}`;
+                    heart.textContent = '❤️';
+                    heart.style.color = myPlayerColor;
+                    mpLivesDisplay.appendChild(heart);
+                }
             }
 
-            // Update scores display
-            mpScoresDisplay.innerHTML = Object.entries(players).map(([playerId, player]) => `
-                <div class="mp-score-item ${player.lives <= 0 ? 'eliminated' : ''}">
-                    <div class="mp-score-color" style="background-color: ${player.color};"></div>
-                    <span class="mp-score-value">${player.score}</span>
-                </div>
-            `).join('');
+            // Only update scores if changed
+            const scoresKey = Object.entries(players).map(([id, p]) => `${id}:${p.score}:${p.lives}`).join(',');
+            if (lastHudState.scores !== scoresKey) {
+                lastHudState.scores = scoresKey;
+                mpScoresDisplay.innerHTML = Object.entries(players).map(([playerId, player]) => `
+                    <div class="mp-score-item ${player.lives <= 0 ? 'eliminated' : ''}">
+                        <div class="mp-score-color" style="background-color: ${player.color};"></div>
+                        <span class="mp-score-value">${player.score}</span>
+                    </div>
+                `).join('');
+            }
         }
 
         // Handle multiplayer death
@@ -5297,8 +5388,47 @@
             indicator.textContent = 'Spectating...';
             document.body.appendChild(indicator);
 
+            // Add leave button for spectators
+            const leaveBtn = document.createElement('button');
+            leaveBtn.className = 'spectator-leave-btn';
+            leaveBtn.id = 'spectatorLeaveBtn';
+            leaveBtn.textContent = 'Leave Game';
+            leaveBtn.onclick = leaveMultiplayerGame;
+            document.body.appendChild(leaveBtn);
+
             // Clear snake
             snake = [];
+        }
+
+        // Cleanup multiplayer state
+        function cleanupMultiplayer() {
+            // Stop listeners
+            if (gameStateListener) {
+                gameStateListener();
+                gameStateListener = null;
+            }
+            if (syncInterval) {
+                clearInterval(syncInterval);
+                syncInterval = null;
+            }
+            if (gameLoop) {
+                clearInterval(gameLoop);
+                gameLoop = null;
+            }
+
+            // Remove spectator UI
+            const spectatingIndicator = document.getElementById('spectatingIndicator');
+            if (spectatingIndicator) spectatingIndicator.remove();
+            const spectatorLeaveBtn = document.getElementById('spectatorLeaveBtn');
+            if (spectatorLeaveBtn) spectatorLeaveBtn.remove();
+
+            // Reset state
+            isMultiplayer = false;
+            currentGameId = null;
+            isHost = false;
+            isSpectating = false;
+            otherPlayers = {};
+            playerLives = 3;
         }
 
         // Show multiplayer results
@@ -5307,10 +5437,12 @@
             if (gameLoop) clearInterval(gameLoop);
             if (syncInterval) clearInterval(syncInterval);
 
-            // Hide HUD and spectating indicator
+            // Hide HUD and spectating UI
             mpHud.style.display = 'none';
             const spectatingIndicator = document.getElementById('spectatingIndicator');
             if (spectatingIndicator) spectatingIndicator.remove();
+            const spectatorLeaveBtn = document.getElementById('spectatorLeaveBtn');
+            if (spectatorLeaveBtn) spectatorLeaveBtn.remove();
 
             // Get rankings
             const players = Object.entries(gameData.players || {})
