@@ -5057,9 +5057,11 @@
                     updateLobbyPlayers(gameData.players);
                     showLobby(currentGameId, gameData);
                 } else if (gameData.status === 'playing') {
-                    // Game started
-                    mpLobbyModal.classList.remove('show');
-                    startMultiplayerGame(gameData);
+                    // Game started - only initialize once
+                    if (!gameLoop) {
+                        mpLobbyModal.classList.remove('show');
+                        startMultiplayerGame(gameData);
+                    }
                 } else if (gameData.status === 'finished') {
                     showMultiplayerResults(gameData);
                 }
