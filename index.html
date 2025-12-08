@@ -2911,7 +2911,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs, where, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-        import { getDatabase, ref, set, get, onValue, update, remove, push, child, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+        import { getDatabase, ref, set, get, onValue, update as dbUpdate, remove, push, child, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
         // Firebase config
         const firebaseConfig = {
@@ -2925,11 +2925,21 @@
         };
 
         // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const rtdb = getDatabase(app);
-        const provider = new GoogleAuthProvider();
+        let app, auth, db, rtdb, provider;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            provider = new GoogleAuthProvider();
+            try {
+                rtdb = getDatabase(app);
+            } catch (e) {
+                console.warn('Realtime Database not available:', e);
+                rtdb = null;
+            }
+        } catch (e) {
+            console.error('Firebase initialization failed:', e);
+        }
 
         // Game elements
         const canvas = document.getElementById('gameCanvas');
@@ -3911,6 +3921,9 @@
                 await loadCustomUsername();
                 const displayName = customUsername || user.displayName || 'Player';
 
+                // Check for multiplayer room in URL
+                setTimeout(checkUrlForRoom, 500);
+
                 authContainer.innerHTML = `
                     <div class="user-info">
                         <img class="user-avatar" src="${user.photoURL || 'https://via.placeholder.com/40'}" alt="avatar">
@@ -4631,9 +4644,17 @@
             }, 2200);
         });
 
+        // Fallback: hide loading screen after 4 seconds no matter what
+        setTimeout(() => {
+            const ls = document.getElementById('loadingScreen');
+            if (ls && !ls.classList.contains('hidden')) {
+                ls.classList.add('hidden');
+            }
+        }, 4000);
+
         // ===== MULTIPLAYER FUNCTIONS =====
 
-        // DOM elements for multiplayer
+        // DOM elements for multiplayer (with null checks)
         const mpLobbyModal = document.getElementById('mpLobbyModal');
         const mpLobbyClose = document.getElementById('mpLobbyClose');
         const roomCodeDisplay = document.getElementById('roomCodeDisplay');
@@ -4662,39 +4683,43 @@
         const roomCodeInput = document.getElementById('roomCodeInput');
         const joinRoomBtn = document.getElementById('joinRoomBtn');
 
-        // Player count selection
+        // Player count selection (with null check)
         document.querySelectorAll('[data-players]').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('[data-players]').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 playerCount = parseInt(btn.dataset.players);
                 isMultiplayer = playerCount > 1;
-                multiplayerControls.style.display = isMultiplayer ? 'block' : 'none';
+                if (multiplayerControls) multiplayerControls.style.display = isMultiplayer ? 'block' : 'none';
             });
         });
 
         // Create room button
-        createRoomBtn.addEventListener('click', async () => {
-            if (!currentUser) {
-                alert('Please sign in to create a multiplayer room');
-                return;
-            }
-            await createMultiplayerRoom(playerCount);
-        });
+        if (createRoomBtn) {
+            createRoomBtn.addEventListener('click', async () => {
+                if (!currentUser) {
+                    alert('Please sign in to create a multiplayer room');
+                    return;
+                }
+                await createMultiplayerRoom(playerCount);
+            });
+        }
 
         // Join room button
-        joinRoomBtn.addEventListener('click', async () => {
-            const roomCode = roomCodeInput.value.trim().toUpperCase();
-            if (!roomCode) {
-                alert('Please enter a room code');
-                return;
-            }
-            if (!currentUser) {
-                alert('Please sign in to join a multiplayer room');
-                return;
-            }
-            await joinMultiplayerRoom(roomCode);
-        });
+        if (joinRoomBtn) {
+            joinRoomBtn.addEventListener('click', async () => {
+                const roomCode = roomCodeInput ? roomCodeInput.value.trim().toUpperCase() : '';
+                if (!roomCode) {
+                    alert('Please enter a room code');
+                    return;
+                }
+                if (!currentUser) {
+                    alert('Please sign in to join a multiplayer room');
+                    return;
+                }
+                await joinMultiplayerRoom(roomCode);
+            });
+        }
 
         // Create multiplayer room
         async function createMultiplayerRoom(maxPlayers) {
@@ -4939,41 +4964,45 @@
         }
 
         // Toggle ready status
-        mpReadyBtn.addEventListener('click', async () => {
-            if (!currentGameId || !currentUser) return;
+        if (mpReadyBtn) {
+            mpReadyBtn.addEventListener('click', async () => {
+                if (!currentGameId || !currentUser || !rtdb) return;
 
-            const playerRef = ref(rtdb, `games/${currentGameId}/players/${currentUser.uid}/ready`);
-            const snapshot = await get(playerRef);
-            const currentReady = snapshot.val() || false;
+                const playerRef = ref(rtdb, `games/${currentGameId}/players/${currentUser.uid}/ready`);
+                const snapshot = await get(playerRef);
+                const currentReady = snapshot.val() || false;
 
-            await set(playerRef, !currentReady);
+                await set(playerRef, !currentReady);
 
-            mpReadyBtn.textContent = !currentReady ? 'Not Ready' : 'Ready';
-            mpReadyBtn.classList.toggle('ready', !currentReady);
-        });
+                mpReadyBtn.textContent = !currentReady ? 'Not Ready' : 'Ready';
+                mpReadyBtn.classList.toggle('ready', !currentReady);
+            });
+        }
 
         // Start game (host only)
-        mpStartBtn.addEventListener('click', async () => {
-            if (!currentGameId || !isHost) return;
+        if (mpStartBtn) {
+            mpStartBtn.addEventListener('click', async () => {
+                if (!currentGameId || !isHost || !rtdb) return;
 
-            // Generate initial food position
-            const size = sizeSettings[currentSize];
-            const initialFood = {
-                x: Math.floor(Math.random() * size.tiles),
-                y: Math.floor(Math.random() * size.tiles),
-                type: 'apple'
-            };
+                // Generate initial food position
+                const size = sizeSettings[currentSize];
+                const initialFood = {
+                    x: Math.floor(Math.random() * size.tiles),
+                    y: Math.floor(Math.random() * size.tiles),
+                    type: 'apple'
+                };
 
-            await update(ref(rtdb, `games/${currentGameId}`), {
-                status: 'playing',
-                food: initialFood,
-                startedAt: Date.now()
+                await dbUpdate(ref(rtdb, `games/${currentGameId}`), {
+                    status: 'playing',
+                    food: initialFood,
+                    startedAt: Date.now()
+                });
             });
-        });
+        }
 
         // Leave room
-        mpLeaveBtn.addEventListener('click', () => leaveRoom());
-        mpLobbyClose.addEventListener('click', () => leaveRoom());
+        if (mpLeaveBtn) mpLeaveBtn.addEventListener('click', () => leaveRoom());
+        if (mpLobbyClose) mpLobbyClose.addEventListener('click', () => leaveRoom());
 
         async function leaveRoom() {
             if (currentGameId && currentUser) {
@@ -5000,23 +5029,27 @@
             document.querySelectorAll('[data-players]').forEach(b => {
                 b.classList.toggle('active', b.dataset.players === '1');
             });
-            multiplayerControls.style.display = 'none';
+            if (multiplayerControls) multiplayerControls.style.display = 'none';
         }
 
         // Copy room code
-        copyRoomCode.addEventListener('click', () => {
-            navigator.clipboard.writeText(currentGameId);
-            copyRoomCode.style.background = 'var(--primary)';
-            setTimeout(() => copyRoomCode.style.background = '', 1000);
-        });
+        if (copyRoomCode) {
+            copyRoomCode.addEventListener('click', () => {
+                navigator.clipboard.writeText(currentGameId);
+                copyRoomCode.style.background = 'var(--primary)';
+                setTimeout(() => copyRoomCode.style.background = '', 1000);
+            });
+        }
 
         // Copy room link
-        copyRoomLink.addEventListener('click', () => {
-            const link = `${window.location.origin}${window.location.pathname}?room=${currentGameId}`;
-            navigator.clipboard.writeText(link);
-            copyRoomLink.style.background = 'var(--primary)';
-            setTimeout(() => copyRoomLink.style.background = '', 1000);
-        });
+        if (copyRoomLink) {
+            copyRoomLink.addEventListener('click', () => {
+                const link = `${window.location.origin}${window.location.pathname}?room=${currentGameId}`;
+                navigator.clipboard.writeText(link);
+                copyRoomLink.style.background = 'var(--primary)';
+                setTimeout(() => copyRoomLink.style.background = '', 1000);
+            });
+        }
 
         // Start multiplayer game
         function startMultiplayerGame(gameData) {
@@ -5060,7 +5093,7 @@
             if (!currentGameId || !currentUser || isSpectating) return;
 
             try {
-                await update(ref(rtdb, `games/${currentGameId}/players/${currentUser.uid}`), {
+                await dbUpdate(ref(rtdb, `games/${currentGameId}/players/${currentUser.uid}`), {
                     snake: snake,
                     direction: direction,
                     score: score,
@@ -5091,7 +5124,7 @@
             if (alivePlayers.length <= 1 && Object.keys(players).length > 1) {
                 // Game over - only one player left
                 if (isHost) {
-                    update(ref(rtdb, `games/${currentGameId}`), { status: 'finished' });
+                    dbUpdate(ref(rtdb, `games/${currentGameId}`), { status: 'finished' });
                 }
             }
         }
@@ -5140,14 +5173,14 @@
 
                     for (const [playerId, _] of alivePlayers) {
                         const currentScore = gameData.players[playerId].score || 0;
-                        await update(ref(rtdb, `games/${currentGameId}/players/${playerId}`), {
+                        await dbUpdate(ref(rtdb, `games/${currentGameId}/players/${playerId}`), {
                             score: currentScore + pointsPerPlayer
                         });
                     }
                 }
 
                 // Update my state
-                await update(ref(rtdb, `games/${currentGameId}/players/${currentUser.uid}`), {
+                await dbUpdate(ref(rtdb, `games/${currentGameId}/players/${currentUser.uid}`), {
                     lives: playerLives,
                     score: 0,
                     alive: playerLives > 0
@@ -5274,46 +5307,50 @@
         }
 
         // Results modal actions
-        mpPlayAgain.addEventListener('click', async () => {
-            mpResultsModal.classList.remove('show');
+        if (mpPlayAgain) {
+            mpPlayAgain.addEventListener('click', async () => {
+                if (mpResultsModal) mpResultsModal.classList.remove('show');
 
-            if (currentGameId && isHost) {
-                // Reset game state
-                const gameSnapshot = await get(ref(rtdb, `games/${currentGameId}`));
-                const gameData = gameSnapshot.val();
+                if (currentGameId && isHost && rtdb) {
+                    // Reset game state
+                    const gameSnapshot = await get(ref(rtdb, `games/${currentGameId}`));
+                    const gameData = gameSnapshot.val();
 
-                if (gameData) {
-                    // Reset all players
-                    const resetPlayers = {};
-                    Object.entries(gameData.players).forEach(([playerId, player]) => {
-                        resetPlayers[playerId] = {
-                            ...player,
-                            lives: 3,
-                            score: 0,
-                            snake: [],
-                            alive: true,
-                            ready: false
-                        };
-                    });
+                    if (gameData) {
+                        // Reset all players
+                        const resetPlayers = {};
+                        Object.entries(gameData.players).forEach(([playerId, player]) => {
+                            resetPlayers[playerId] = {
+                                ...player,
+                                lives: 3,
+                                score: 0,
+                                snake: [],
+                                alive: true,
+                                ready: false
+                            };
+                        });
 
-                    await update(ref(rtdb, `games/${currentGameId}`), {
-                        status: 'waiting',
-                        players: resetPlayers
-                    });
+                        await dbUpdate(ref(rtdb, `games/${currentGameId}`), {
+                            status: 'waiting',
+                            players: resetPlayers
+                        });
+                    }
+
+                    playerLives = 3;
+                    isSpectating = false;
+                    showLobby(currentGameId, gameData);
+                } else {
+                    closeLobby();
                 }
+            });
+        }
 
-                playerLives = 3;
-                isSpectating = false;
-                showLobby(currentGameId, gameData);
-            } else {
-                closeLobby();
-            }
-        });
-
-        mpExitResults.addEventListener('click', () => {
-            mpResultsModal.classList.remove('show');
-            leaveRoom();
-        });
+        if (mpExitResults) {
+            mpExitResults.addEventListener('click', () => {
+                if (mpResultsModal) mpResultsModal.classList.remove('show');
+                leaveRoom();
+            });
+        }
 
         // Handle food collision in multiplayer (host broadcasts new food)
         async function handleMultiplayerFoodCollision() {
@@ -5337,7 +5374,7 @@
             ));
 
             food = newFood;
-            await update(ref(rtdb, `games/${currentGameId}`), { food: newFood });
+            await dbUpdate(ref(rtdb, `games/${currentGameId}`), { food: newFood });
         }
 
         function getRandomFoodType() {
@@ -5366,15 +5403,6 @@
                 }, 500);
             }
         }
-
-        // Call checkUrlForRoom after auth state changes
-        const originalOnAuthStateChanged = onAuthStateChanged;
-        onAuthStateChanged(auth, (user) => {
-            // Original auth handling is done elsewhere, just check URL here
-            if (user) {
-                setTimeout(checkUrlForRoom, 1000);
-            }
-        });
 
         // Start
         applySettings();
