@@ -5041,6 +5041,7 @@
                     isSpectating = false;
                     playerLives = 3;
                     lastHudState = { lives: -1, scores: '' };
+                    window.mpGameStarted = false; // Allow game to start again
 
                     // Hide game UI elements
                     mpHud.style.display = 'none';
@@ -5058,7 +5059,9 @@
                     showLobby(currentGameId, gameData);
                 } else if (gameData.status === 'playing') {
                     // Game started - only initialize once
-                    if (!gameLoop) {
+                    console.log('Status is playing, gameLoop:', gameLoop, 'mpGameStarted:', window.mpGameStarted);
+                    if (!window.mpGameStarted) {
+                        window.mpGameStarted = true;
                         mpLobbyModal.classList.remove('show');
                         startMultiplayerGame(gameData);
                     }
@@ -5490,6 +5493,7 @@
             isSpectating = false;
             otherPlayers = {};
             playerLives = 3;
+            window.mpGameStarted = false;
         }
 
         // Show multiplayer results
