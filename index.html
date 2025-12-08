@@ -641,6 +641,79 @@
             color: rgba(255, 255, 255, 0.7);
         }
 
+        .fullscreen-btn {
+            margin-top: 15px;
+            background: linear-gradient(135deg, var(--glass), rgba(0, 255, 136, 0.1));
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: 'Rajdhani', sans-serif;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .fullscreen-btn:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+            box-shadow: 0 0 20px var(--primary-dim);
+            transform: translateY(-2px);
+        }
+
+        .fullscreen-btn svg {
+            transition: transform 0.3s ease;
+        }
+
+        .fullscreen-btn:hover svg {
+            transform: scale(1.1);
+        }
+
+        /* ===== FULLSCREEN MODE ===== */
+        .game-container:fullscreen,
+        .game-container:-webkit-full-screen {
+            background: var(--bg-dark);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container:fullscreen .canvas-wrapper,
+        .game-container:-webkit-full-screen .canvas-wrapper {
+            transform: scale(1.5);
+        }
+
+        .game-container:fullscreen .header,
+        .game-container:-webkit-full-screen .header {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .game-container:fullscreen .score-board,
+        .game-container:-webkit-full-screen .score-board {
+            margin-bottom: 30px;
+        }
+
+        .game-container:fullscreen .controls,
+        .game-container:-webkit-full-screen .controls {
+            margin-top: 40px;
+        }
+
+        .game-container:fullscreen .mobile-controls,
+        .game-container:-webkit-full-screen .mobile-controls {
+            margin-top: 30px;
+        }
+
         /* ===== SIDE PANELS (GLASSMORPHISM) ===== */
         .left-panel, .side-panel {
             display: flex;
@@ -1550,7 +1623,13 @@
             </div>
             <div class="controls">
                 <p>Use Arrow Keys or WASD to move</p>
-                <p>Press Space to pause</p>
+                <p>Press Space to pause | Press F for fullscreen</p>
+                <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+                    <svg id="fullscreenIcon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                    </svg>
+                    Fullscreen
+                </button>
             </div>
             <div class="mobile-controls">
                 <div class="btn-row">
@@ -2448,6 +2527,52 @@
             activePowerupsEl.innerHTML = html;
         }
 
+        // Fullscreen function
+        window.toggleFullscreen = function() {
+            const gameContainer = document.querySelector('.game-container');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const icon = document.getElementById('fullscreenIcon');
+
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                if (gameContainer.requestFullscreen) {
+                    gameContainer.requestFullscreen();
+                } else if (gameContainer.webkitRequestFullscreen) {
+                    gameContainer.webkitRequestFullscreen();
+                }
+                fullscreenBtn.innerHTML = `
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>
+                    </svg>
+                    Exit Fullscreen
+                `;
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+                fullscreenBtn.innerHTML = `
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                    </svg>
+                    Fullscreen
+                `;
+            }
+        };
+
+        // Listen for fullscreen change to update button
+        document.addEventListener('fullscreenchange', () => {
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            if (!document.fullscreenElement) {
+                fullscreenBtn.innerHTML = `
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                    </svg>
+                    Fullscreen
+                `;
+            }
+        });
+
         // Auth functions
         window.signIn = async function() {
             try {
@@ -3079,6 +3204,11 @@
         document.addEventListener('keydown', (e) => {
             initAudio(); // Initialize audio on first interaction
 
+            // Prevent arrow keys and space from scrolling the page
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+                e.preventDefault();
+            }
+
             switch (e.key) {
                 case 'ArrowUp':
                 case 'w':
@@ -3103,6 +3233,15 @@
                 case ' ':
                     isPaused = !isPaused;
                     draw();
+                    break;
+                case 'f':
+                case 'F':
+                    toggleFullscreen();
+                    break;
+                case 'Escape':
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    }
                     break;
             }
         });
