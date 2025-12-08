@@ -5016,8 +5016,46 @@
                 const gameData = snapshot.val();
                 console.log('Game state:', gameData.status, 'Players:', Object.keys(gameData.players || {}).length);
 
+                // Check if current player was kicked
+                if (gameData.players && !gameData.players[currentUser.uid]) {
+                    console.log('Player was kicked from the room');
+                    cleanupMultiplayer();
+                    mpLobbyModal.classList.remove('show');
+                    if (mpResultsModal) mpResultsModal.classList.remove('show');
+                    alert('You have been removed from the room.');
+                    return;
+                }
+
                 if (gameData.status === 'waiting') {
+                    // Reset local state when returning to lobby (e.g., after Play Again)
+                    if (gameLoop) {
+                        clearInterval(gameLoop);
+                        gameLoop = null;
+                    }
+                    if (syncInterval) {
+                        clearInterval(syncInterval);
+                        syncInterval = null;
+                    }
+
+                    // Reset player state
+                    isSpectating = false;
+                    playerLives = 3;
+                    lastHudState = { lives: -1, scores: '' };
+
+                    // Hide game UI elements
+                    mpHud.style.display = 'none';
+                    gameOverEl.style.display = 'none';
+                    const spectatingIndicator = document.getElementById('spectatingIndicator');
+                    if (spectatingIndicator) spectatingIndicator.remove();
+                    const spectatorLeaveBtn = document.getElementById('spectatorLeaveBtn');
+                    if (spectatorLeaveBtn) spectatorLeaveBtn.remove();
+
+                    // Hide results modal if showing
+                    if (mpResultsModal) mpResultsModal.classList.remove('show');
+
+                    // Show lobby
                     updateLobbyPlayers(gameData.players);
+                    showLobby(currentGameId, gameData);
                 } else if (gameData.status === 'playing') {
                     // Game started
                     mpLobbyModal.classList.remove('show');
@@ -5172,6 +5210,12 @@
 
         // Start multiplayer game
         function startMultiplayerGame(gameData) {
+            console.log('Starting multiplayer game...');
+
+            // Reset important state first
+            isSpectating = false;
+            playerLives = 3;
+
             // Apply game settings
             currentMode = gameData.mode;
             currentSpeed = gameData.speed;
@@ -5182,18 +5226,30 @@
             const myPlayer = gameData.players[currentUser.uid];
             if (myPlayer) {
                 myPlayerColor = myPlayer.color;
-                playerLives = myPlayer.lives;
+                playerLives = myPlayer.lives || 3;
             }
 
-            // Apply settings and start
+            // Apply settings
             applySettings();
+
+            // Reset HUD tracking state
+            lastHudState = { lives: -1, scores: '' };
+
+            // Initialize the game (creates snake, resets score, etc.)
+            init();
 
             // Show multiplayer HUD
             mpHud.style.display = 'flex';
             updateMpHud(gameData.players);
 
-            // Start syncing state
+            // Clear any existing game loop and sync interval
+            if (gameLoop) clearInterval(gameLoop);
             if (syncInterval) clearInterval(syncInterval);
+
+            // Start the game loop
+            gameLoop = setInterval(update, gameSpeed);
+
+            // Start syncing state
             syncInterval = setInterval(() => syncLocalState(), SYNC_RATE);
 
             // Initialize other players
@@ -5204,7 +5260,10 @@
                 food = gameData.food;
             }
 
-            isSpectating = false;
+            // Hide game over screen if visible
+            gameOverEl.style.display = 'none';
+
+            console.log('Multiplayer game started, snake:', snake.length, 'segments');
         }
 
         // Sync local state to Firebase
