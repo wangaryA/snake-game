@@ -1731,6 +1731,509 @@
             box-shadow: 0 10px 30px var(--primary-dim);
         }
 
+        /* ===== MULTIPLAYER STYLES ===== */
+
+        /* Multiplayer Controls in Settings */
+        .multiplayer-controls {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .mp-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .mp-btn {
+            background: linear-gradient(135deg, var(--primary), #00cc6a);
+            color: var(--bg-dark);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mp-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--primary-dim);
+        }
+
+        .mp-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .mp-divider {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .mp-join-section {
+            display: flex;
+            gap: 8px;
+        }
+
+        .room-code-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .room-code-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-dim);
+        }
+
+        .room-code-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .join-room-btn {
+            background: var(--secondary);
+        }
+
+        /* Multiplayer Lobby Modal */
+        .mp-lobby-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+
+        .mp-lobby-modal.show {
+            display: flex;
+        }
+
+        .mp-lobby-content {
+            background: var(--bg-card);
+            backdrop-filter: blur(30px);
+            padding: 30px 40px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 100px var(--primary-dim);
+            animation: modal-appear 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .mp-lobby-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .mp-lobby-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        .mp-lobby-close {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            line-height: 1;
+        }
+
+        .mp-lobby-close:hover {
+            color: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .mp-room-code-section {
+            margin-bottom: 20px;
+        }
+
+        .mp-room-code-section label {
+            display: block;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .mp-room-code-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .mp-room-code-display span {
+            flex: 1;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: var(--primary);
+            letter-spacing: 4px;
+        }
+
+        .mp-copy-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .mp-copy-btn:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        .mp-game-settings {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .mp-setting-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mp-players-section {
+            margin-bottom: 20px;
+        }
+
+        .mp-players-section label {
+            display: block;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .mp-players-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mp-player-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .mp-player-color {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            box-shadow: 0 0 15px currentColor;
+        }
+
+        .mp-player-name {
+            flex: 1;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .mp-player-host {
+            font-size: 0.7rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mp-player-ready {
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mp-player-ready.ready {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--primary);
+        }
+
+        .mp-player-ready.waiting {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .mp-lobby-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .mp-lobby-actions .mp-btn {
+            flex: 1;
+        }
+
+        .mp-ready-btn.ready {
+            background: rgba(0, 255, 136, 0.3);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .mp-leave-btn {
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .mp-leave-btn:hover {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 8px 25px rgba(255, 0, 85, 0.3);
+        }
+
+        .mp-start-btn {
+            background: linear-gradient(135deg, var(--gold), #ff9900);
+        }
+
+        .mp-lobby-status {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        /* Multiplayer HUD */
+        .mp-hud {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .mp-lives-display {
+            display: flex;
+            gap: 8px;
+        }
+
+        .mp-life-heart {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 5px currentColor);
+            transition: all 0.3s ease;
+        }
+
+        .mp-life-heart.lost {
+            opacity: 0.3;
+            filter: grayscale(1);
+        }
+
+        .mp-scores-display {
+            display: flex;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 8px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .mp-score-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mp-score-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .mp-score-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .mp-score-item.eliminated .mp-score-value {
+            opacity: 0.4;
+            text-decoration: line-through;
+        }
+
+        /* Spectating Indicator */
+        .spectating-indicator {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 0, 85, 0.2);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            z-index: 100;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Multiplayer Results Modal */
+        .mp-results-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+
+        .mp-results-modal.show {
+            display: flex;
+        }
+
+        .mp-results-content {
+            background: var(--bg-card);
+            backdrop-filter: blur(30px);
+            padding: 40px 50px;
+            border-radius: 25px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+            animation: modal-appear 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            min-width: 350px;
+        }
+
+        .mp-results-content h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent);
+            font-size: 2rem;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+        }
+
+        .mp-results-winner {
+            margin-bottom: 25px;
+        }
+
+        .mp-results-winner .winner-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .mp-results-winner .winner-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .mp-results-rankings {
+            margin-bottom: 25px;
+        }
+
+        .mp-ranking-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+
+        .mp-ranking-item.first {
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .mp-ranking-position {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            width: 30px;
+        }
+
+        .mp-ranking-position.gold { color: var(--gold); }
+        .mp-ranking-position.silver { color: #c0c0c0; }
+        .mp-ranking-position.bronze { color: #cd7f32; }
+
+        .mp-ranking-name {
+            flex: 1;
+            text-align: left;
+            margin-left: 10px;
+        }
+
+        .mp-ranking-score {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+        }
+
+        .mp-results-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .mp-results-actions .mp-btn {
+            min-width: 120px;
+        }
+
         /* Edit Username Button in User Info */
         .edit-username-btn {
             background: transparent;
@@ -2124,6 +2627,26 @@
                 <h2>Settings</h2>
 
                 <div class="setting-group">
+                    <label class="setting-label">Players</label>
+                    <div class="setting-options player-count-options">
+                        <button class="setting-btn active" data-players="1">1P</button>
+                        <button class="setting-btn" data-players="2">2P</button>
+                        <button class="setting-btn" data-players="3">3P</button>
+                    </div>
+                </div>
+
+                <div class="multiplayer-controls" id="multiplayerControls" style="display: none;">
+                    <div class="mp-section">
+                        <button class="mp-btn create-room-btn" id="createRoomBtn">Create Room</button>
+                        <div class="mp-divider">or</div>
+                        <div class="mp-join-section">
+                            <input type="text" id="roomCodeInput" placeholder="Enter Room Code" class="room-code-input">
+                            <button class="mp-btn join-room-btn" id="joinRoomBtn">Join</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
                     <label class="setting-label">Game Mode</label>
                     <div class="setting-options mode-options">
                         <button class="setting-btn active" data-mode="classic" title="Standard snake game">Classic</button>
@@ -2287,6 +2810,83 @@
         </div>
     </div>
 
+    <!-- Multiplayer Lobby Modal -->
+    <div class="mp-lobby-modal" id="mpLobbyModal">
+        <div class="mp-lobby-content">
+            <div class="mp-lobby-header">
+                <h2>Multiplayer Lobby</h2>
+                <button class="mp-lobby-close" id="mpLobbyClose">&times;</button>
+            </div>
+
+            <div class="mp-room-code-section">
+                <label>Room Code</label>
+                <div class="mp-room-code-display">
+                    <span id="roomCodeDisplay">------</span>
+                    <button class="mp-copy-btn" id="copyRoomCode" title="Copy room code">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                    </button>
+                    <button class="mp-copy-btn" id="copyRoomLink" title="Copy invite link">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="mp-game-settings">
+                <div class="mp-setting-badge"><span id="lobbyMode">Classic</span></div>
+                <div class="mp-setting-badge"><span id="lobbySpeed">Normal</span></div>
+                <div class="mp-setting-badge"><span id="lobbySize">Medium</span></div>
+            </div>
+
+            <div class="mp-players-section">
+                <label>Players (<span id="playerCountDisplay">1</span>/<span id="maxPlayersDisplay">2</span>)</label>
+                <div class="mp-players-list" id="mpPlayersList">
+                    <!-- Players will be added dynamically -->
+                </div>
+            </div>
+
+            <div class="mp-lobby-actions">
+                <button class="mp-btn mp-ready-btn" id="mpReadyBtn">Ready</button>
+                <button class="mp-btn mp-start-btn" id="mpStartBtn" style="display: none;">Start Game</button>
+                <button class="mp-btn mp-leave-btn" id="mpLeaveBtn">Leave Room</button>
+            </div>
+
+            <div class="mp-lobby-status" id="mpLobbyStatus">Waiting for players...</div>
+        </div>
+    </div>
+
+    <!-- Multiplayer HUD (shown during game) -->
+    <div class="mp-hud" id="mpHud" style="display: none;">
+        <div class="mp-lives-display" id="mpLivesDisplay">
+            <!-- Lives hearts will be added dynamically -->
+        </div>
+        <div class="mp-scores-display" id="mpScoresDisplay">
+            <!-- Player scores will be added dynamically -->
+        </div>
+    </div>
+
+    <!-- Multiplayer Results Modal -->
+    <div class="mp-results-modal" id="mpResultsModal">
+        <div class="mp-results-content">
+            <h2>Game Over!</h2>
+            <div class="mp-results-winner" id="mpResultsWinner">
+                <!-- Winner display -->
+            </div>
+            <div class="mp-results-rankings" id="mpResultsRankings">
+                <!-- Rankings list -->
+            </div>
+            <div class="mp-results-actions">
+                <button class="mp-btn" id="mpPlayAgain">Play Again</button>
+                <button class="mp-btn mp-leave-btn" id="mpExitResults">Exit</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Achievement Popup -->
     <div class="achievement-popup" id="achievementPopup">
         <div class="achievement-icon">🏆</div>
@@ -2311,6 +2911,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs, where, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+        import { getDatabase, ref, set, get, onValue, update, remove, push, child, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
         // Firebase config
         const firebaseConfig = {
@@ -2319,13 +2920,15 @@
             projectId: "snake-3e4dc",
             storageBucket: "snake-3e4dc.firebasestorage.app",
             messagingSenderId: "503723147324",
-            appId: "1:503723147324:web:46ba9ef5f034c831904339"
+            appId: "1:503723147324:web:46ba9ef5f034c831904339",
+            databaseURL: "https://snake-3e4dc-default-rtdb.firebaseio.com"
         };
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const rtdb = getDatabase(app);
         const provider = new GoogleAuthProvider();
 
         // Game elements
@@ -2360,6 +2963,20 @@
         let currentMode = 'classic';
         let timeLeft = 60;
         let timerInterval = null;
+
+        // Multiplayer state
+        let isMultiplayer = false;
+        let playerCount = 1; // 1, 2, or 3
+        let currentGameId = null;
+        let isHost = false;
+        let playerLives = 3;
+        let isSpectating = false;
+        let otherPlayers = {}; // {playerId: {snake, score, lives, color, name, alive}}
+        let gameStateListener = null;
+        let syncInterval = null;
+        let myPlayerColor = '#00ff88';
+        const PLAYER_COLORS = ['#00ff88', '#ff4488', '#44aaff', '#ffaa00'];
+        const SYNC_RATE = 66; // ~15 updates per second
 
         // Game modes configuration
         const GAME_MODES = {
@@ -2791,6 +3408,89 @@
             return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
         }
 
+        // Draw ghost players (other players in multiplayer)
+        function drawGhostPlayers() {
+            Object.entries(otherPlayers).forEach(([playerId, playerData]) => {
+                if (!playerData.snake || playerData.snake.length === 0) return;
+                if (playerData.lives <= 0) return; // Don't draw eliminated players
+
+                const ghostAlpha = 0.4; // Ghost transparency
+                const playerColor = playerData.color || '#ff4488';
+
+                // Draw ghost snake
+                playerData.snake.forEach((segment, index) => {
+                    const alpha = ghostAlpha * (1 - (index / playerData.snake.length) * 0.5);
+                    ctx.fillStyle = hexToRgba(playerColor, alpha);
+                    ctx.shadowColor = playerColor;
+                    ctx.shadowBlur = index === 0 ? 8 : 4;
+
+                    ctx.beginPath();
+                    ctx.roundRect(
+                        segment.x * gridSize + 1,
+                        segment.y * gridSize + 1,
+                        gridSize - 2,
+                        gridSize - 2,
+                        5
+                    );
+                    ctx.fill();
+                });
+                ctx.shadowBlur = 0;
+
+                // Draw eyes for ghost snake head
+                if (playerData.snake.length > 0) {
+                    const head = playerData.snake[0];
+                    const dir = playerData.direction || { x: 1, y: 0 };
+                    ctx.fillStyle = `rgba(0, 0, 0, ${ghostAlpha})`;
+
+                    let eye1X, eye1Y, eye2X, eye2Y;
+                    const eyeOffset = gridSize * 0.3;
+                    const eyeSize = gridSize * 0.12;
+
+                    if (dir.x === 1) {
+                        eye1X = head.x * gridSize + gridSize - eyeOffset;
+                        eye1Y = head.y * gridSize + eyeOffset;
+                        eye2X = head.x * gridSize + gridSize - eyeOffset;
+                        eye2Y = head.y * gridSize + gridSize - eyeOffset;
+                    } else if (dir.x === -1) {
+                        eye1X = head.x * gridSize + eyeOffset;
+                        eye1Y = head.y * gridSize + eyeOffset;
+                        eye2X = head.x * gridSize + eyeOffset;
+                        eye2Y = head.y * gridSize + gridSize - eyeOffset;
+                    } else if (dir.y === -1) {
+                        eye1X = head.x * gridSize + eyeOffset;
+                        eye1Y = head.y * gridSize + eyeOffset;
+                        eye2X = head.x * gridSize + gridSize - eyeOffset;
+                        eye2Y = head.y * gridSize + eyeOffset;
+                    } else {
+                        eye1X = head.x * gridSize + eyeOffset;
+                        eye1Y = head.y * gridSize + gridSize - eyeOffset;
+                        eye2X = head.x * gridSize + gridSize - eyeOffset;
+                        eye2Y = head.y * gridSize + gridSize - eyeOffset;
+                    }
+
+                    ctx.beginPath();
+                    ctx.arc(eye1X, eye1Y, eyeSize, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(eye2X, eye2Y, eyeSize, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Draw player name above head
+                if (playerData.snake.length > 0) {
+                    const head = playerData.snake[0];
+                    ctx.font = '10px Inter, sans-serif';
+                    ctx.fillStyle = `rgba(255, 255, 255, ${ghostAlpha + 0.2})`;
+                    ctx.textAlign = 'center';
+                    ctx.fillText(
+                        playerData.name || 'Player',
+                        head.x * gridSize + gridSize / 2,
+                        head.y * gridSize - 5
+                    );
+                }
+            });
+        }
+
         // Sound System
         let soundEnabled = true;
         let audioContext = null;
@@ -3052,8 +3752,8 @@
                 }
             }
 
-            // Spawn new powerup
-            if (!powerup && now - lastPowerupSpawn >= POWERUP_SPAWN_INTERVAL) {
+            // Spawn new powerup (disabled in multiplayer)
+            if (!isMultiplayer && !powerup && now - lastPowerupSpawn >= POWERUP_SPAWN_INTERVAL) {
                 spawnPowerup();
                 lastPowerupSpawn = now;
             }
@@ -3566,7 +4266,12 @@
                     snake.pop(); // Normal pop
                 }
 
-                spawnFood();
+                // Spawn new food (multiplayer: host controls food)
+                if (isMultiplayer && currentGameId) {
+                    handleMultiplayerFoodCollision();
+                } else {
+                    spawnFood();
+                }
 
                 // Length achievements
                 if (snake.length >= 10) checkAchievement('length_10');
@@ -3798,6 +4503,11 @@
                 ctx.fill();
             }
 
+            // Draw ghost players (multiplayer)
+            if (isMultiplayer && Object.keys(otherPlayers).length > 0) {
+                drawGhostPlayers();
+            }
+
             // Pause overlay
             if (isPaused) {
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
@@ -3821,6 +4531,14 @@
         }
 
         async function gameOver() {
+            // Handle multiplayer death differently
+            if (isMultiplayer && currentGameId) {
+                playSound('death');
+                screenShake();
+                await handleMultiplayerDeath();
+                return;
+            }
+
             clearInterval(gameLoop);
             if (timerInterval) {
                 clearInterval(timerInterval);
@@ -3911,6 +4629,751 @@
             setTimeout(() => {
                 document.getElementById('loadingScreen').classList.add('hidden');
             }, 2200);
+        });
+
+        // ===== MULTIPLAYER FUNCTIONS =====
+
+        // DOM elements for multiplayer
+        const mpLobbyModal = document.getElementById('mpLobbyModal');
+        const mpLobbyClose = document.getElementById('mpLobbyClose');
+        const roomCodeDisplay = document.getElementById('roomCodeDisplay');
+        const copyRoomCode = document.getElementById('copyRoomCode');
+        const copyRoomLink = document.getElementById('copyRoomLink');
+        const lobbyMode = document.getElementById('lobbyMode');
+        const lobbySpeed = document.getElementById('lobbySpeed');
+        const lobbySize = document.getElementById('lobbySize');
+        const playerCountDisplay = document.getElementById('playerCountDisplay');
+        const maxPlayersDisplay = document.getElementById('maxPlayersDisplay');
+        const mpPlayersList = document.getElementById('mpPlayersList');
+        const mpReadyBtn = document.getElementById('mpReadyBtn');
+        const mpStartBtn = document.getElementById('mpStartBtn');
+        const mpLeaveBtn = document.getElementById('mpLeaveBtn');
+        const mpLobbyStatus = document.getElementById('mpLobbyStatus');
+        const mpHud = document.getElementById('mpHud');
+        const mpLivesDisplay = document.getElementById('mpLivesDisplay');
+        const mpScoresDisplay = document.getElementById('mpScoresDisplay');
+        const mpResultsModal = document.getElementById('mpResultsModal');
+        const mpResultsWinner = document.getElementById('mpResultsWinner');
+        const mpResultsRankings = document.getElementById('mpResultsRankings');
+        const mpPlayAgain = document.getElementById('mpPlayAgain');
+        const mpExitResults = document.getElementById('mpExitResults');
+        const multiplayerControls = document.getElementById('multiplayerControls');
+        const createRoomBtn = document.getElementById('createRoomBtn');
+        const roomCodeInput = document.getElementById('roomCodeInput');
+        const joinRoomBtn = document.getElementById('joinRoomBtn');
+
+        // Player count selection
+        document.querySelectorAll('[data-players]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('[data-players]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                playerCount = parseInt(btn.dataset.players);
+                isMultiplayer = playerCount > 1;
+                multiplayerControls.style.display = isMultiplayer ? 'block' : 'none';
+            });
+        });
+
+        // Create room button
+        createRoomBtn.addEventListener('click', async () => {
+            if (!currentUser) {
+                alert('Please sign in to create a multiplayer room');
+                return;
+            }
+            await createMultiplayerRoom(playerCount);
+        });
+
+        // Join room button
+        joinRoomBtn.addEventListener('click', async () => {
+            const roomCode = roomCodeInput.value.trim().toUpperCase();
+            if (!roomCode) {
+                alert('Please enter a room code');
+                return;
+            }
+            if (!currentUser) {
+                alert('Please sign in to join a multiplayer room');
+                return;
+            }
+            await joinMultiplayerRoom(roomCode);
+        });
+
+        // Create multiplayer room
+        async function createMultiplayerRoom(maxPlayers) {
+            try {
+                const gameRef = push(ref(rtdb, 'games'));
+                const gameId = gameRef.key.substring(0, 6).toUpperCase(); // Short room code
+
+                const displayName = customUsername || currentUser.displayName || 'Player';
+                const colorIndex = 0;
+                myPlayerColor = PLAYER_COLORS[colorIndex];
+
+                const gameData = {
+                    hostId: currentUser.uid,
+                    status: 'waiting',
+                    mode: currentMode,
+                    speed: currentSpeed,
+                    mapSize: currentSize,
+                    obstacles: obstaclesEnabled,
+                    maxPlayers: maxPlayers,
+                    createdAt: Date.now(),
+                    players: {
+                        [currentUser.uid]: {
+                            name: displayName,
+                            color: myPlayerColor,
+                            colorIndex: colorIndex,
+                            lives: 3,
+                            score: 0,
+                            snake: [],
+                            direction: { x: 1, y: 0 },
+                            alive: true,
+                            ready: false,
+                            isHost: true
+                        }
+                    }
+                };
+
+                // Store with short ID
+                await set(ref(rtdb, `games/${gameId}`), gameData);
+
+                currentGameId = gameId;
+                isHost = true;
+
+                // Set up disconnect cleanup
+                const playerRef = ref(rtdb, `games/${gameId}/players/${currentUser.uid}`);
+                onDisconnect(playerRef).remove();
+
+                // Listen for game state changes
+                listenToGameState(gameId);
+
+                // Show lobby
+                showLobby(gameId, gameData);
+
+            } catch (error) {
+                console.error('Error creating room:', error);
+                alert('Failed to create room. Please try again.');
+            }
+        }
+
+        // Join multiplayer room
+        async function joinMultiplayerRoom(gameId) {
+            try {
+                const gameSnapshot = await get(ref(rtdb, `games/${gameId}`));
+
+                if (!gameSnapshot.exists()) {
+                    alert('Room not found. Please check the code and try again.');
+                    return;
+                }
+
+                const gameData = gameSnapshot.val();
+
+                if (gameData.status !== 'waiting') {
+                    alert('This game has already started.');
+                    return;
+                }
+
+                const currentPlayers = Object.keys(gameData.players || {}).length;
+                if (currentPlayers >= gameData.maxPlayers) {
+                    alert('This room is full.');
+                    return;
+                }
+
+                // Check if already in room
+                if (gameData.players && gameData.players[currentUser.uid]) {
+                    // Already in room, just show lobby
+                    currentGameId = gameId;
+                    isHost = gameData.hostId === currentUser.uid;
+                    listenToGameState(gameId);
+                    showLobby(gameId, gameData);
+                    return;
+                }
+
+                // Assign color
+                const usedColorIndices = Object.values(gameData.players || {}).map(p => p.colorIndex);
+                let colorIndex = 0;
+                for (let i = 0; i < PLAYER_COLORS.length; i++) {
+                    if (!usedColorIndices.includes(i)) {
+                        colorIndex = i;
+                        break;
+                    }
+                }
+                myPlayerColor = PLAYER_COLORS[colorIndex];
+
+                const displayName = customUsername || currentUser.displayName || 'Player';
+
+                // Add player to room
+                await set(ref(rtdb, `games/${gameId}/players/${currentUser.uid}`), {
+                    name: displayName,
+                    color: myPlayerColor,
+                    colorIndex: colorIndex,
+                    lives: 3,
+                    score: 0,
+                    snake: [],
+                    direction: { x: 1, y: 0 },
+                    alive: true,
+                    ready: false,
+                    isHost: false
+                });
+
+                currentGameId = gameId;
+                isHost = false;
+
+                // Apply host's settings
+                currentMode = gameData.mode;
+                currentSpeed = gameData.speed;
+                currentSize = gameData.mapSize;
+                obstaclesEnabled = gameData.obstacles;
+
+                // Update UI to reflect host's settings
+                document.querySelectorAll('[data-mode]').forEach(b => {
+                    b.classList.toggle('active', b.dataset.mode === currentMode);
+                });
+                document.querySelectorAll('[data-speed]').forEach(b => {
+                    b.classList.toggle('active', b.dataset.speed === currentSpeed);
+                });
+                document.querySelectorAll('[data-size]').forEach(b => {
+                    b.classList.toggle('active', b.dataset.size === currentSize);
+                });
+
+                // Set up disconnect cleanup
+                const playerRef = ref(rtdb, `games/${gameId}/players/${currentUser.uid}`);
+                onDisconnect(playerRef).remove();
+
+                // Listen for game state changes
+                listenToGameState(gameId);
+
+                // Show lobby
+                showLobby(gameId, gameData);
+
+            } catch (error) {
+                console.error('Error joining room:', error);
+                alert('Failed to join room. Please try again.');
+            }
+        }
+
+        // Show lobby modal
+        function showLobby(gameId, gameData) {
+            roomCodeDisplay.textContent = gameId;
+            lobbyMode.textContent = GAME_MODES[gameData.mode]?.name || gameData.mode;
+            lobbySpeed.textContent = gameData.speed.charAt(0).toUpperCase() + gameData.speed.slice(1);
+            lobbySize.textContent = gameData.mapSize.charAt(0).toUpperCase() + gameData.mapSize.slice(1);
+            maxPlayersDisplay.textContent = gameData.maxPlayers;
+
+            mpStartBtn.style.display = isHost ? 'block' : 'none';
+            mpReadyBtn.textContent = 'Ready';
+            mpReadyBtn.classList.remove('ready');
+
+            mpLobbyModal.classList.add('show');
+            updateLobbyPlayers(gameData.players);
+        }
+
+        // Update lobby players list
+        function updateLobbyPlayers(players) {
+            if (!players) return;
+
+            const playerArray = Object.entries(players);
+            playerCountDisplay.textContent = playerArray.length;
+
+            mpPlayersList.innerHTML = playerArray.map(([playerId, player]) => `
+                <div class="mp-player-item">
+                    <div class="mp-player-color" style="background-color: ${player.color}; color: ${player.color};"></div>
+                    <div class="mp-player-name">${player.name}</div>
+                    ${player.isHost ? '<span class="mp-player-host">Host</span>' : ''}
+                    <span class="mp-player-ready ${player.ready ? 'ready' : 'waiting'}">
+                        ${player.ready ? 'Ready' : 'Waiting'}
+                    </span>
+                </div>
+            `).join('');
+
+            // Update status
+            const allReady = playerArray.every(([_, p]) => p.ready);
+            const enoughPlayers = playerArray.length >= 2;
+
+            if (allReady && enoughPlayers) {
+                mpLobbyStatus.textContent = isHost ? 'All players ready! Start the game.' : 'Waiting for host to start...';
+                mpStartBtn.disabled = false;
+            } else if (!enoughPlayers) {
+                mpLobbyStatus.textContent = 'Waiting for more players...';
+                mpStartBtn.disabled = true;
+            } else {
+                mpLobbyStatus.textContent = 'Waiting for players to ready up...';
+                mpStartBtn.disabled = true;
+            }
+        }
+
+        // Listen to game state changes
+        function listenToGameState(gameId) {
+            if (gameStateListener) {
+                // Remove previous listener
+                gameStateListener();
+            }
+
+            gameStateListener = onValue(ref(rtdb, `games/${gameId}`), (snapshot) => {
+                if (!snapshot.exists()) {
+                    // Room was deleted
+                    closeLobby();
+                    alert('The room has been closed.');
+                    return;
+                }
+
+                const gameData = snapshot.val();
+
+                if (gameData.status === 'waiting') {
+                    updateLobbyPlayers(gameData.players);
+                } else if (gameData.status === 'playing') {
+                    // Game started
+                    mpLobbyModal.classList.remove('show');
+                    startMultiplayerGame(gameData);
+                } else if (gameData.status === 'finished') {
+                    showMultiplayerResults(gameData);
+                }
+
+                // Update other players during gameplay
+                if (isMultiplayer && gameData.status === 'playing') {
+                    updateOtherPlayers(gameData.players);
+
+                    // Check for shared food update (host controls food)
+                    if (gameData.food && !isHost) {
+                        food = gameData.food;
+                    }
+                }
+            });
+        }
+
+        // Toggle ready status
+        mpReadyBtn.addEventListener('click', async () => {
+            if (!currentGameId || !currentUser) return;
+
+            const playerRef = ref(rtdb, `games/${currentGameId}/players/${currentUser.uid}/ready`);
+            const snapshot = await get(playerRef);
+            const currentReady = snapshot.val() || false;
+
+            await set(playerRef, !currentReady);
+
+            mpReadyBtn.textContent = !currentReady ? 'Not Ready' : 'Ready';
+            mpReadyBtn.classList.toggle('ready', !currentReady);
+        });
+
+        // Start game (host only)
+        mpStartBtn.addEventListener('click', async () => {
+            if (!currentGameId || !isHost) return;
+
+            // Generate initial food position
+            const size = sizeSettings[currentSize];
+            const initialFood = {
+                x: Math.floor(Math.random() * size.tiles),
+                y: Math.floor(Math.random() * size.tiles),
+                type: 'apple'
+            };
+
+            await update(ref(rtdb, `games/${currentGameId}`), {
+                status: 'playing',
+                food: initialFood,
+                startedAt: Date.now()
+            });
+        });
+
+        // Leave room
+        mpLeaveBtn.addEventListener('click', () => leaveRoom());
+        mpLobbyClose.addEventListener('click', () => leaveRoom());
+
+        async function leaveRoom() {
+            if (currentGameId && currentUser) {
+                await remove(ref(rtdb, `games/${currentGameId}/players/${currentUser.uid}`));
+
+                // If host leaves, delete the room
+                if (isHost) {
+                    await remove(ref(rtdb, `games/${currentGameId}`));
+                }
+            }
+            closeLobby();
+        }
+
+        function closeLobby() {
+            mpLobbyModal.classList.remove('show');
+            if (gameStateListener) {
+                gameStateListener();
+                gameStateListener = null;
+            }
+            currentGameId = null;
+            isHost = false;
+            isMultiplayer = false;
+            playerCount = 1;
+            document.querySelectorAll('[data-players]').forEach(b => {
+                b.classList.toggle('active', b.dataset.players === '1');
+            });
+            multiplayerControls.style.display = 'none';
+        }
+
+        // Copy room code
+        copyRoomCode.addEventListener('click', () => {
+            navigator.clipboard.writeText(currentGameId);
+            copyRoomCode.style.background = 'var(--primary)';
+            setTimeout(() => copyRoomCode.style.background = '', 1000);
+        });
+
+        // Copy room link
+        copyRoomLink.addEventListener('click', () => {
+            const link = `${window.location.origin}${window.location.pathname}?room=${currentGameId}`;
+            navigator.clipboard.writeText(link);
+            copyRoomLink.style.background = 'var(--primary)';
+            setTimeout(() => copyRoomLink.style.background = '', 1000);
+        });
+
+        // Start multiplayer game
+        function startMultiplayerGame(gameData) {
+            // Apply game settings
+            currentMode = gameData.mode;
+            currentSpeed = gameData.speed;
+            currentSize = gameData.mapSize;
+            obstaclesEnabled = gameData.obstacles;
+
+            // Get my player data
+            const myPlayer = gameData.players[currentUser.uid];
+            if (myPlayer) {
+                myPlayerColor = myPlayer.color;
+                playerLives = myPlayer.lives;
+            }
+
+            // Apply settings and start
+            applySettings();
+
+            // Show multiplayer HUD
+            mpHud.style.display = 'flex';
+            updateMpHud(gameData.players);
+
+            // Start syncing state
+            if (syncInterval) clearInterval(syncInterval);
+            syncInterval = setInterval(() => syncLocalState(), SYNC_RATE);
+
+            // Initialize other players
+            updateOtherPlayers(gameData.players);
+
+            // Set initial food from host
+            if (gameData.food) {
+                food = gameData.food;
+            }
+
+            isSpectating = false;
+        }
+
+        // Sync local state to Firebase
+        async function syncLocalState() {
+            if (!currentGameId || !currentUser || isSpectating) return;
+
+            try {
+                await update(ref(rtdb, `games/${currentGameId}/players/${currentUser.uid}`), {
+                    snake: snake,
+                    direction: direction,
+                    score: score,
+                    lives: playerLives,
+                    alive: playerLives > 0,
+                    lastUpdate: Date.now()
+                });
+            } catch (error) {
+                console.error('Sync error:', error);
+            }
+        }
+
+        // Update other players data
+        function updateOtherPlayers(players) {
+            if (!players) return;
+
+            otherPlayers = {};
+            Object.entries(players).forEach(([playerId, playerData]) => {
+                if (playerId !== currentUser.uid) {
+                    otherPlayers[playerId] = playerData;
+                }
+            });
+
+            updateMpHud(players);
+
+            // Check win condition
+            const alivePlayers = Object.entries(players).filter(([_, p]) => p.lives > 0);
+            if (alivePlayers.length <= 1 && Object.keys(players).length > 1) {
+                // Game over - only one player left
+                if (isHost) {
+                    update(ref(rtdb, `games/${currentGameId}`), { status: 'finished' });
+                }
+            }
+        }
+
+        // Update multiplayer HUD
+        function updateMpHud(players) {
+            if (!players) return;
+
+            // Update lives display
+            mpLivesDisplay.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                const heart = document.createElement('span');
+                heart.className = `mp-life-heart ${i >= playerLives ? 'lost' : ''}`;
+                heart.textContent = '❤️';
+                heart.style.color = myPlayerColor;
+                mpLivesDisplay.appendChild(heart);
+            }
+
+            // Update scores display
+            mpScoresDisplay.innerHTML = Object.entries(players).map(([playerId, player]) => `
+                <div class="mp-score-item ${player.lives <= 0 ? 'eliminated' : ''}">
+                    <div class="mp-score-color" style="background-color: ${player.color};"></div>
+                    <span class="mp-score-value">${player.score}</span>
+                </div>
+            `).join('');
+        }
+
+        // Handle multiplayer death
+        async function handleMultiplayerDeath() {
+            playerLives--;
+
+            // Calculate points to give to survivors
+            const pointsToGive = Math.floor(score / 2);
+
+            // Update Firebase
+            if (currentGameId && currentUser) {
+                // Give points to other alive players
+                const gameSnapshot = await get(ref(rtdb, `games/${currentGameId}`));
+                const gameData = gameSnapshot.val();
+
+                if (gameData && gameData.players) {
+                    const alivePlayers = Object.entries(gameData.players)
+                        .filter(([id, p]) => id !== currentUser.uid && p.lives > 0);
+
+                    const pointsPerPlayer = Math.floor(pointsToGive / Math.max(alivePlayers.length, 1));
+
+                    for (const [playerId, _] of alivePlayers) {
+                        const currentScore = gameData.players[playerId].score || 0;
+                        await update(ref(rtdb, `games/${currentGameId}/players/${playerId}`), {
+                            score: currentScore + pointsPerPlayer
+                        });
+                    }
+                }
+
+                // Update my state
+                await update(ref(rtdb, `games/${currentGameId}/players/${currentUser.uid}`), {
+                    lives: playerLives,
+                    score: 0,
+                    alive: playerLives > 0
+                });
+            }
+
+            // Reset my score
+            score = 0;
+
+            if (playerLives > 0) {
+                // Respawn
+                respawnPlayer();
+            } else {
+                // Enter spectator mode
+                enterSpectatorMode();
+            }
+        }
+
+        // Respawn player
+        function respawnPlayer() {
+            const size = sizeSettings[currentSize];
+
+            // Find safe spawn position
+            let spawnX, spawnY;
+            let attempts = 0;
+            do {
+                spawnX = Math.floor(Math.random() * (size.tiles - 4)) + 2;
+                spawnY = Math.floor(Math.random() * (size.tiles - 4)) + 2;
+                attempts++;
+            } while (attempts < 50 && isPositionOccupied(spawnX, spawnY));
+
+            // Reset snake
+            snake = [];
+            for (let i = 0; i < 3; i++) {
+                snake.push({ x: spawnX - i, y: spawnY });
+            }
+
+            direction = { x: 1, y: 0 };
+            nextDirection = { x: 1, y: 0 };
+
+            // Flash effect
+            const wrapper = document.querySelector('.canvas-wrapper');
+            wrapper.classList.add('shake');
+            setTimeout(() => wrapper.classList.remove('shake'), 500);
+        }
+
+        // Check if position is occupied by other players
+        function isPositionOccupied(x, y) {
+            // Check other players' snakes
+            for (const player of Object.values(otherPlayers)) {
+                if (player.snake && player.snake.some(seg => seg.x === x && seg.y === y)) {
+                    return true;
+                }
+            }
+            // Check obstacles
+            if (obstacles.some(obs => obs.x === x && obs.y === y)) {
+                return true;
+            }
+            return false;
+        }
+
+        // Enter spectator mode
+        function enterSpectatorMode() {
+            isSpectating = true;
+
+            // Stop syncing
+            if (syncInterval) {
+                clearInterval(syncInterval);
+                syncInterval = null;
+            }
+
+            // Show spectating indicator
+            const indicator = document.createElement('div');
+            indicator.className = 'spectating-indicator';
+            indicator.id = 'spectatingIndicator';
+            indicator.textContent = 'Spectating...';
+            document.body.appendChild(indicator);
+
+            // Clear snake
+            snake = [];
+        }
+
+        // Show multiplayer results
+        function showMultiplayerResults(gameData) {
+            // Stop game
+            if (gameLoop) clearInterval(gameLoop);
+            if (syncInterval) clearInterval(syncInterval);
+
+            // Hide HUD and spectating indicator
+            mpHud.style.display = 'none';
+            const spectatingIndicator = document.getElementById('spectatingIndicator');
+            if (spectatingIndicator) spectatingIndicator.remove();
+
+            // Get rankings
+            const players = Object.entries(gameData.players || {})
+                .map(([id, p]) => ({ id, ...p }))
+                .sort((a, b) => {
+                    // Sort by lives (more = better), then by score
+                    if (b.lives !== a.lives) return b.lives - a.lives;
+                    return b.score - a.score;
+                });
+
+            const winner = players[0];
+
+            // Show winner
+            mpResultsWinner.innerHTML = `
+                <div class="winner-label">Winner</div>
+                <div class="winner-name">${winner.name}</div>
+            `;
+
+            // Show rankings
+            mpResultsRankings.innerHTML = players.map((player, index) => {
+                const positionClass = index === 0 ? 'gold' : index === 1 ? 'silver' : 'bronze';
+                return `
+                    <div class="mp-ranking-item ${index === 0 ? 'first' : ''}">
+                        <span class="mp-ranking-position ${positionClass}">#${index + 1}</span>
+                        <span class="mp-ranking-name">${player.name}</span>
+                        <span class="mp-ranking-score">${player.score}</span>
+                    </div>
+                `;
+            }).join('');
+
+            mpResultsModal.classList.add('show');
+        }
+
+        // Results modal actions
+        mpPlayAgain.addEventListener('click', async () => {
+            mpResultsModal.classList.remove('show');
+
+            if (currentGameId && isHost) {
+                // Reset game state
+                const gameSnapshot = await get(ref(rtdb, `games/${currentGameId}`));
+                const gameData = gameSnapshot.val();
+
+                if (gameData) {
+                    // Reset all players
+                    const resetPlayers = {};
+                    Object.entries(gameData.players).forEach(([playerId, player]) => {
+                        resetPlayers[playerId] = {
+                            ...player,
+                            lives: 3,
+                            score: 0,
+                            snake: [],
+                            alive: true,
+                            ready: false
+                        };
+                    });
+
+                    await update(ref(rtdb, `games/${currentGameId}`), {
+                        status: 'waiting',
+                        players: resetPlayers
+                    });
+                }
+
+                playerLives = 3;
+                isSpectating = false;
+                showLobby(currentGameId, gameData);
+            } else {
+                closeLobby();
+            }
+        });
+
+        mpExitResults.addEventListener('click', () => {
+            mpResultsModal.classList.remove('show');
+            leaveRoom();
+        });
+
+        // Handle food collision in multiplayer (host broadcasts new food)
+        async function handleMultiplayerFoodCollision() {
+            if (!isHost || !currentGameId) return;
+
+            // Generate new food
+            const size = sizeSettings[currentSize];
+            let newFood;
+            let attempts = 0;
+
+            do {
+                newFood = {
+                    x: Math.floor(Math.random() * size.tiles),
+                    y: Math.floor(Math.random() * size.tiles),
+                    type: getRandomFoodType()
+                };
+                attempts++;
+            } while (attempts < 50 && (
+                snake.some(seg => seg.x === newFood.x && seg.y === newFood.y) ||
+                isPositionOccupied(newFood.x, newFood.y)
+            ));
+
+            food = newFood;
+            await update(ref(rtdb, `games/${currentGameId}`), { food: newFood });
+        }
+
+        function getRandomFoodType() {
+            const rand = Math.random();
+            if (rand < 0.6) return 'apple';
+            if (rand < 0.8) return 'cherry';
+            if (rand < 0.9) return 'golden';
+            return 'rotten';
+        }
+
+        // Check for room code in URL on load
+        function checkUrlForRoom() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const roomCode = urlParams.get('room');
+
+            if (roomCode && currentUser) {
+                // Wait a bit for everything to initialize
+                setTimeout(() => {
+                    playerCount = 2;
+                    isMultiplayer = true;
+                    document.querySelectorAll('[data-players]').forEach(b => {
+                        b.classList.toggle('active', b.dataset.players === '2');
+                    });
+                    multiplayerControls.style.display = 'block';
+                    joinMultiplayerRoom(roomCode.toUpperCase());
+                }, 500);
+            }
+        }
+
+        // Call checkUrlForRoom after auth state changes
+        const originalOnAuthStateChanged = onAuthStateChanged;
+        onAuthStateChanged(auth, (user) => {
+            // Original auth handling is done elsewhere, just check URL here
+            if (user) {
+                setTimeout(checkUrlForRoom, 1000);
+            }
         });
 
         // Start
