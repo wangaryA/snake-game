@@ -4218,6 +4218,18 @@
         function update() {
             if (isPaused) return;
 
+            // Spectators only watch - don't update their own snake
+            if (isSpectating) {
+                draw(); // Still draw to see other players
+                return;
+            }
+
+            // Safety check - if snake is empty, don't try to update
+            if (!snake || snake.length === 0) {
+                draw();
+                return;
+            }
+
             updatePowerups();
             updatePowerupDisplay();
 
@@ -5064,6 +5076,10 @@
                     const waitingForHost = document.getElementById('waitingForHost');
                     if (waitingForHost) waitingForHost.remove();
 
+                    // Remove last standing indicator if present
+                    const lastStandingIndicator = document.getElementById('lastStandingIndicator');
+                    if (lastStandingIndicator) lastStandingIndicator.remove();
+
                     // Hide results modal if showing
                     if (mpResultsModal) mpResultsModal.classList.remove('show');
 
@@ -5323,20 +5339,31 @@
             const gameRunningTime = Date.now() - (window.mpGameStartTime || Date.now());
             if (gameRunningTime > 2000) {
                 const alivePlayers = Object.entries(players).filter(([_, p]) => p.lives > 0);
+                const deadPlayers = Object.entries(players).filter(([_, p]) => p.lives <= 0);
                 const totalPlayers = Object.keys(players).length;
 
-                // Game over only when exactly 1 player left alive (the winner) in a multi-player game
-                // Make sure game hasn't already been ended
-                if (alivePlayers.length === 1 && totalPlayers > 1 && !window.mpGameEnding) {
-                    window.mpGameEnding = true; // Prevent multiple triggers
-                    console.log('Game ending - winner:', alivePlayers[0][1].name);
-                    if (isHost) {
-                        dbUpdate(ref(rtdb, `games/${currentGameId}`), { status: 'finished' });
+                // Show "Last One Standing" indicator when only 1 player remains
+                if (alivePlayers.length === 1 && totalPlayers > 1) {
+                    const lastStandingIndicator = document.getElementById('lastStandingIndicator');
+                    if (!lastStandingIndicator && alivePlayers[0][0] === currentUser.uid) {
+                        // Current player is the last one standing - show indicator
+                        const indicator = document.createElement('div');
+                        indicator.id = 'lastStandingIndicator';
+                        indicator.style.cssText = 'position:fixed;top:120px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#ffd700,#ff8c00);padding:10px 25px;border-radius:25px;color:#000;font-weight:bold;font-size:1rem;z-index:1000;animation:pulse 1s infinite;box-shadow:0 0 20px rgba(255,215,0,0.5);';
+                        indicator.textContent = '👑 Last One Standing!';
+                        document.body.appendChild(indicator);
                     }
-                } else if (alivePlayers.length === 0 && totalPlayers > 1 && !window.mpGameEnding) {
-                    // Everyone died at roughly the same time - end game
+                }
+
+                // Game ends ONLY when ALL players are eliminated
+                if (alivePlayers.length === 0 && totalPlayers > 1 && !window.mpGameEnding) {
                     window.mpGameEnding = true;
                     console.log('Game ending - all players eliminated');
+
+                    // Remove last standing indicator if present
+                    const lastStandingIndicator = document.getElementById('lastStandingIndicator');
+                    if (lastStandingIndicator) lastStandingIndicator.remove();
+
                     if (isHost) {
                         dbUpdate(ref(rtdb, `games/${currentGameId}`), { status: 'finished' });
                     }
@@ -5532,6 +5559,10 @@
             // Remove waiting for host message if present
             const waitingForHost = document.getElementById('waitingForHost');
             if (waitingForHost) waitingForHost.remove();
+
+            // Remove last standing indicator if present
+            const lastStandingIndicator = document.getElementById('lastStandingIndicator');
+            if (lastStandingIndicator) lastStandingIndicator.remove();
         }
 
         // Show multiplayer results
