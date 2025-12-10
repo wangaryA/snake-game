@@ -3142,7 +3142,7 @@
         let syncInterval = null;
         let myPlayerColor = '#00ff88';
         const PLAYER_COLORS = ['#00ff88', '#ff4488', '#44aaff', '#ffaa00'];
-        const SYNC_RATE = 66; // ~15 updates per second
+        const SYNC_RATE = 100; // ~10 updates per second (reduced for performance)
 
         // Game modes configuration
         const GAME_MODES = {
@@ -4393,7 +4393,9 @@
 
             // Check food collision
             if (head.x === food.x && head.y === food.y) {
-                const foodInfo = FOOD_TYPES[food.type];
+                // Safety check for food type
+                const foodType = food.type || 'apple';
+                const foodInfo = FOOD_TYPES[foodType] || FOOD_TYPES['apple'];
                 totalFoodEaten++;
 
                 // Achievements for food
@@ -5262,8 +5264,9 @@
                 if (isMultiplayer && gameData.status === 'playing') {
                     updateOtherPlayers(gameData.players);
 
-                    // Check for shared food update (host controls food)
-                    if (gameData.food && !isHost) {
+                    // Sync food for ALL players (not just non-host)
+                    // Only update if the food position actually changed
+                    if (gameData.food && (food.x !== gameData.food.x || food.y !== gameData.food.y)) {
                         food = gameData.food;
                     }
                 }
@@ -5900,7 +5903,8 @@
                 isPositionOccupied(newFood.x, newFood.y)
             ));
 
-            food = newFood;
+            // Don't update local food here - let Firebase sync handle it for both players
+            // This ensures both players see the same food
 
             // Update food in Firebase (any player can do this)
             try {
