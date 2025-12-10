@@ -1947,6 +1947,60 @@
             letter-spacing: 1px;
         }
 
+        .mp-host-settings {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .mp-setting-group {
+            margin-bottom: 12px;
+        }
+
+        .mp-setting-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .mp-setting-group label {
+            display: block;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .mp-setting-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .mp-setting-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.7);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .mp-setting-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+        }
+
+        .mp-setting-btn.active {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+            font-weight: bold;
+        }
+
         .mp-players-section {
             margin-bottom: 20px;
         }
@@ -2882,10 +2936,48 @@
                 </div>
             </div>
 
-            <div class="mp-game-settings">
+            <div class="mp-game-settings" id="mpGameSettings">
                 <div class="mp-setting-badge"><span id="lobbyMode">Classic</span></div>
                 <div class="mp-setting-badge"><span id="lobbySpeed">Normal</span></div>
                 <div class="mp-setting-badge"><span id="lobbySize">Medium</span></div>
+                <div class="mp-setting-badge"><span id="lobbyObstacles">No Obstacles</span></div>
+            </div>
+
+            <!-- Host Settings (only shown to host) -->
+            <div class="mp-host-settings" id="mpHostSettings" style="display: none;">
+                <div class="mp-setting-group">
+                    <label>Game Mode</label>
+                    <div class="mp-setting-buttons" id="mpModeButtons">
+                        <button class="mp-setting-btn active" data-mp-mode="classic">Classic</button>
+                        <button class="mp-setting-btn" data-mp-mode="speed">Speed</button>
+                        <button class="mp-setting-btn" data-mp-mode="zen">Zen</button>
+                        <button class="mp-setting-btn" data-mp-mode="time">Time Attack</button>
+                    </div>
+                </div>
+                <div class="mp-setting-group">
+                    <label>Speed</label>
+                    <div class="mp-setting-buttons" id="mpSpeedButtons">
+                        <button class="mp-setting-btn" data-mp-speed="slow">Slow</button>
+                        <button class="mp-setting-btn active" data-mp-speed="normal">Normal</button>
+                        <button class="mp-setting-btn" data-mp-speed="fast">Fast</button>
+                        <button class="mp-setting-btn" data-mp-speed="insane">Insane</button>
+                    </div>
+                </div>
+                <div class="mp-setting-group">
+                    <label>Map Size</label>
+                    <div class="mp-setting-buttons" id="mpSizeButtons">
+                        <button class="mp-setting-btn" data-mp-size="small">Small</button>
+                        <button class="mp-setting-btn active" data-mp-size="medium">Medium</button>
+                        <button class="mp-setting-btn" data-mp-size="large">Large</button>
+                    </div>
+                </div>
+                <div class="mp-setting-group">
+                    <label>Obstacles</label>
+                    <div class="mp-setting-buttons" id="mpObstaclesButtons">
+                        <button class="mp-setting-btn active" data-mp-obstacles="false">Off</button>
+                        <button class="mp-setting-btn" data-mp-obstacles="true">On</button>
+                    </div>
+                </div>
             </div>
 
             <div class="mp-players-section">
@@ -4968,9 +5060,41 @@
             lobbySize.textContent = gameData.mapSize.charAt(0).toUpperCase() + gameData.mapSize.slice(1);
             maxPlayersDisplay.textContent = gameData.maxPlayers;
 
+            // Show obstacles setting
+            const lobbyObstacles = document.getElementById('lobbyObstacles');
+            if (lobbyObstacles) {
+                lobbyObstacles.textContent = gameData.obstacles ? 'Obstacles On' : 'No Obstacles';
+            }
+
             mpStartBtn.style.display = isHost ? 'block' : 'none';
             mpReadyBtn.textContent = 'Ready';
             mpReadyBtn.classList.remove('ready');
+
+            // Show/hide host settings panel
+            const mpHostSettings = document.getElementById('mpHostSettings');
+            const mpGameSettings = document.getElementById('mpGameSettings');
+            if (mpHostSettings) {
+                mpHostSettings.style.display = isHost ? 'block' : 'none';
+            }
+            if (mpGameSettings) {
+                mpGameSettings.style.display = isHost ? 'none' : 'flex';
+            }
+
+            // Update host settings buttons to match current settings
+            if (isHost) {
+                document.querySelectorAll('[data-mp-mode]').forEach(b => {
+                    b.classList.toggle('active', b.dataset.mpMode === gameData.mode);
+                });
+                document.querySelectorAll('[data-mp-speed]').forEach(b => {
+                    b.classList.toggle('active', b.dataset.mpSpeed === gameData.speed);
+                });
+                document.querySelectorAll('[data-mp-size]').forEach(b => {
+                    b.classList.toggle('active', b.dataset.mpSize === gameData.mapSize);
+                });
+                document.querySelectorAll('[data-mp-obstacles]').forEach(b => {
+                    b.classList.toggle('active', (b.dataset.mpObstacles === 'true') === gameData.obstacles);
+                });
+            }
 
             mpLobbyModal.classList.add('show');
             updateLobbyPlayers(gameData.players);
@@ -5083,6 +5207,23 @@
                     // Hide results modal if showing
                     if (mpResultsModal) mpResultsModal.classList.remove('show');
 
+                    // Update settings badges for non-host (in case host changed them)
+                    if (!isHost) {
+                        currentMode = gameData.mode;
+                        currentSpeed = gameData.speed;
+                        currentSize = gameData.mapSize;
+                        obstaclesEnabled = gameData.obstacles;
+
+                        // Update badge displays
+                        lobbyMode.textContent = GAME_MODES[gameData.mode]?.name || gameData.mode;
+                        lobbySpeed.textContent = gameData.speed.charAt(0).toUpperCase() + gameData.speed.slice(1);
+                        lobbySize.textContent = gameData.mapSize.charAt(0).toUpperCase() + gameData.mapSize.slice(1);
+                        const lobbyObstacles = document.getElementById('lobbyObstacles');
+                        if (lobbyObstacles) {
+                            lobbyObstacles.textContent = gameData.obstacles ? 'Obstacles On' : 'No Obstacles';
+                        }
+                    }
+
                     // Show lobby
                     updateLobbyPlayers(gameData.players);
                     showLobby(currentGameId, gameData);
@@ -5126,6 +5267,47 @@
 
         // Make kickPlayer available globally for onclick
         window.kickPlayer = kickPlayer;
+
+        // Host settings event handlers
+        document.querySelectorAll('[data-mp-mode]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                if (!isHost || !currentGameId || !rtdb) return;
+                const newMode = btn.dataset.mpMode;
+                currentMode = newMode;
+                document.querySelectorAll('[data-mp-mode]').forEach(b => b.classList.toggle('active', b.dataset.mpMode === newMode));
+                await dbUpdate(ref(rtdb, `games/${currentGameId}`), { mode: newMode });
+            });
+        });
+
+        document.querySelectorAll('[data-mp-speed]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                if (!isHost || !currentGameId || !rtdb) return;
+                const newSpeed = btn.dataset.mpSpeed;
+                currentSpeed = newSpeed;
+                document.querySelectorAll('[data-mp-speed]').forEach(b => b.classList.toggle('active', b.dataset.mpSpeed === newSpeed));
+                await dbUpdate(ref(rtdb, `games/${currentGameId}`), { speed: newSpeed });
+            });
+        });
+
+        document.querySelectorAll('[data-mp-size]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                if (!isHost || !currentGameId || !rtdb) return;
+                const newSize = btn.dataset.mpSize;
+                currentSize = newSize;
+                document.querySelectorAll('[data-mp-size]').forEach(b => b.classList.toggle('active', b.dataset.mpSize === newSize));
+                await dbUpdate(ref(rtdb, `games/${currentGameId}`), { mapSize: newSize });
+            });
+        });
+
+        document.querySelectorAll('[data-mp-obstacles]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                if (!isHost || !currentGameId || !rtdb) return;
+                const newObstacles = btn.dataset.mpObstacles === 'true';
+                obstaclesEnabled = newObstacles;
+                document.querySelectorAll('[data-mp-obstacles]').forEach(b => b.classList.toggle('active', (b.dataset.mpObstacles === 'true') === newObstacles));
+                await dbUpdate(ref(rtdb, `games/${currentGameId}`), { obstacles: newObstacles });
+            });
+        });
 
         // Leave multiplayer game
         async function leaveMultiplayerGame() {
@@ -5175,12 +5357,12 @@
             mpStartBtn.addEventListener('click', async () => {
                 if (!currentGameId || !isHost || !rtdb) return;
 
-                // Generate initial food position
+                // Generate initial food position with random type
                 const size = sizeSettings[currentSize];
                 const initialFood = {
                     x: Math.floor(Math.random() * size.tiles),
                     y: Math.floor(Math.random() * size.tiles),
-                    type: 'apple'
+                    type: getRandomFoodType()
                 };
 
                 await dbUpdate(ref(rtdb, `games/${currentGameId}`), {
@@ -5678,11 +5860,11 @@
             });
         }
 
-        // Handle food collision in multiplayer (host broadcasts new food)
+        // Handle food collision in multiplayer (any player can trigger new food)
         async function handleMultiplayerFoodCollision() {
-            if (!isHost || !currentGameId) return;
+            if (!currentGameId || !rtdb) return;
 
-            // Generate new food
+            // Generate new food at random position with random type
             const size = sizeSettings[currentSize];
             let newFood;
             let attempts = 0;
@@ -5700,7 +5882,13 @@
             ));
 
             food = newFood;
-            await dbUpdate(ref(rtdb, `games/${currentGameId}`), { food: newFood });
+
+            // Update food in Firebase (any player can do this)
+            try {
+                await dbUpdate(ref(rtdb, `games/${currentGameId}`), { food: newFood });
+            } catch (error) {
+                console.error('Error updating food:', error);
+            }
         }
 
         function getRandomFoodType() {
