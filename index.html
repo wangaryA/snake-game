@@ -5049,6 +5049,8 @@
                     playerLives = 3;
                     lastHudState = { lives: -1, scores: '' };
                     window.mpGameStarted = false; // Allow game to start again
+                    window.mpGameEnding = false; // Reset ending flag
+                    window.mpGameStartTime = null; // Reset start time
 
                     // Hide game UI elements
                     mpHud.style.display = 'none';
@@ -5057,6 +5059,10 @@
                     if (spectatingIndicator) spectatingIndicator.remove();
                     const spectatorLeaveBtn = document.getElementById('spectatorLeaveBtn');
                     if (spectatorLeaveBtn) spectatorLeaveBtn.remove();
+
+                    // Remove waiting for host message if present
+                    const waitingForHost = document.getElementById('waitingForHost');
+                    if (waitingForHost) waitingForHost.remove();
 
                     // Hide results modal if showing
                     if (mpResultsModal) mpResultsModal.classList.remove('show');
@@ -5247,6 +5253,10 @@
             // Reset HUD tracking state
             lastHudState = { lives: -1, scores: '' };
 
+            // Reset game timing and ending flags
+            window.mpGameStartTime = Date.now();
+            window.mpGameEnding = false;
+
             // Initialize the game (creates snake, resets score, etc.)
             init();
 
@@ -5309,12 +5319,27 @@
 
             updateMpHud(players);
 
-            // Check win condition
-            const alivePlayers = Object.entries(players).filter(([_, p]) => p.lives > 0);
-            if (alivePlayers.length <= 1 && Object.keys(players).length > 1) {
-                // Game over - only one player left
-                if (isHost) {
-                    dbUpdate(ref(rtdb, `games/${currentGameId}`), { status: 'finished' });
+            // Check win condition (only if game has been running for at least 2 seconds)
+            const gameRunningTime = Date.now() - (window.mpGameStartTime || Date.now());
+            if (gameRunningTime > 2000) {
+                const alivePlayers = Object.entries(players).filter(([_, p]) => p.lives > 0);
+                const totalPlayers = Object.keys(players).length;
+
+                // Game over only when exactly 1 player left alive (the winner) in a multi-player game
+                // Make sure game hasn't already been ended
+                if (alivePlayers.length === 1 && totalPlayers > 1 && !window.mpGameEnding) {
+                    window.mpGameEnding = true; // Prevent multiple triggers
+                    console.log('Game ending - winner:', alivePlayers[0][1].name);
+                    if (isHost) {
+                        dbUpdate(ref(rtdb, `games/${currentGameId}`), { status: 'finished' });
+                    }
+                } else if (alivePlayers.length === 0 && totalPlayers > 1 && !window.mpGameEnding) {
+                    // Everyone died at roughly the same time - end game
+                    window.mpGameEnding = true;
+                    console.log('Game ending - all players eliminated');
+                    if (isHost) {
+                        dbUpdate(ref(rtdb, `games/${currentGameId}`), { status: 'finished' });
+                    }
                 }
             }
         }
@@ -5501,6 +5526,12 @@
             otherPlayers = {};
             playerLives = 3;
             window.mpGameStarted = false;
+            window.mpGameEnding = false;
+            window.mpGameStartTime = null;
+
+            // Remove waiting for host message if present
+            const waitingForHost = document.getElementById('waitingForHost');
+            if (waitingForHost) waitingForHost.remove();
         }
 
         // Show multiplayer results
@@ -5554,7 +5585,7 @@
                 if (mpResultsModal) mpResultsModal.classList.remove('show');
 
                 if (currentGameId && isHost && rtdb) {
-                    // Reset game state
+                    // Host: Reset game state for everyone
                     const gameSnapshot = await get(ref(rtdb, `games/${currentGameId}`));
                     const gameData = gameSnapshot.val();
 
@@ -5580,7 +5611,29 @@
 
                     playerLives = 3;
                     isSpectating = false;
-                    showLobby(currentGameId, gameData);
+                    window.mpGameStarted = false;
+                    // Lobby will be shown by the game state listener
+                } else if (currentGameId && rtdb) {
+                    // Non-host: Just wait for host to reset
+                    // Reset local state in preparation
+                    playerLives = 3;
+                    isSpectating = false;
+                    window.mpGameStarted = false;
+
+                    // Remove spectator UI if present
+                    const spectatingIndicator = document.getElementById('spectatingIndicator');
+                    if (spectatingIndicator) spectatingIndicator.remove();
+                    const spectatorLeaveBtn = document.getElementById('spectatorLeaveBtn');
+                    if (spectatorLeaveBtn) spectatorLeaveBtn.remove();
+
+                    // Show waiting message
+                    const waitingDiv = document.createElement('div');
+                    waitingDiv.id = 'waitingForHost';
+                    waitingDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.9);padding:30px 50px;border-radius:15px;color:#00ff88;font-size:1.2rem;z-index:10000;text-align:center;border:2px solid #00ff88;';
+                    waitingDiv.innerHTML = '<div style="margin-bottom:10px;">⏳</div>Waiting for host to start...';
+                    document.body.appendChild(waitingDiv);
+
+                    // The game state listener will handle showing the lobby when host resets
                 } else {
                     closeLobby();
                 }
