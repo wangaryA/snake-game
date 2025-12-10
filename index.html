@@ -1852,8 +1852,12 @@
             max-height: calc(100vh - 40px);
             overflow-y: auto;
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 100px var(--primary-dim);
-            animation: modal-appear 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-            margin: auto;
+            animation: lobby-appear 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes lobby-appear {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         /* Custom scrollbar for lobby content */
