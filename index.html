@@ -264,15 +264,22 @@
         }
 
         /* ===== PREMIUM ANIMATED BACKGROUND ===== */
+        html {
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
         body {
             background: #05050f;
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             font-family: 'Inter', sans-serif;
             padding: 20px;
+            padding-top: 40px;
             overflow-x: hidden;
+            overflow-anchor: none;
             position: relative;
         }
 
@@ -4805,7 +4812,10 @@
             if (direction.x !== -1) nextDirection = { x: 1, y: 0 };
         });
 
-        restartBtn.addEventListener('click', init);
+        restartBtn.addEventListener('click', () => {
+            window.scrollTo(0, 0);
+            init();
+        });
 
         // Hide loading screen after everything loads
         window.addEventListener('load', () => {
@@ -5817,6 +5827,7 @@
         // Results modal actions
         if (mpPlayAgain) {
             mpPlayAgain.addEventListener('click', async () => {
+                window.scrollTo(0, 0);
                 if (mpResultsModal) mpResultsModal.classList.remove('show');
 
                 if (currentGameId && isHost && rtdb) {
