@@ -581,6 +581,48 @@
             text-shadow: 0 0 30px var(--primary-dim);
         }
 
+        .mp-live-scores {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .mp-live-score-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .mp-live-score-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        .mp-live-score-name {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mp-live-score-value {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .mp-live-score-item.me {
+            border-color: var(--primary);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
         .timer span {
             color: var(--accent-orange);
             font-family: 'Orbitron', sans-serif;
@@ -2712,7 +2754,8 @@
             <div class="score-board">
                 <div class="score">Score: <span id="score">0</span></div>
                 <div class="timer" id="timerDisplay" style="display: none;">Time: <span id="timer">60</span>s</div>
-                <div class="high-score">Your Best: <span id="highScore">0</span></div>
+                <div class="high-score" id="highScoreDisplay">Your Best: <span id="highScore">0</span></div>
+                <div class="mp-live-scores" id="mpLiveScores" style="display: none;"></div>
             </div>
             <div class="mode-indicator" id="modeIndicator"></div>
             <div class="combo-display" id="comboDisplay"></div>
@@ -3114,6 +3157,8 @@
         const ctx = canvas.getContext('2d');
         const scoreEl = document.getElementById('score');
         const highScoreEl = document.getElementById('highScore');
+        const highScoreDisplay = document.getElementById('highScoreDisplay');
+        const mpLiveScores = document.getElementById('mpLiveScores');
         const gameOverEl = document.getElementById('gameOver');
         const finalScoreEl = document.getElementById('finalScore');
         const restartBtn = document.getElementById('restartBtn');
@@ -4941,6 +4986,7 @@
                             colorIndex: colorIndex,
                             lives: 3,
                             score: 0,
+                            finalScore: 0,
                             snake: [],
                             direction: { x: 1, y: 0 },
                             alive: true,
@@ -5038,6 +5084,7 @@
                     colorIndex: colorIndex,
                     lives: 3,
                     score: 0,
+                    finalScore: 0,
                     snake: [],
                     direction: { x: 1, y: 0 },
                     alive: true,
@@ -5490,7 +5537,11 @@
             applySettings();
 
             // Reset HUD tracking state
-            lastHudState = { lives: -1, scores: '' };
+            lastHudState = { lives: -1, scores: '', liveScores: '' };
+
+            // Show live scores instead of high score in multiplayer
+            if (highScoreDisplay) highScoreDisplay.style.display = 'none';
+            if (mpLiveScores) mpLiveScores.style.display = 'flex';
 
             // Reset game timing and ending flags
             window.mpGameStartTime = Date.now();
@@ -5560,6 +5611,7 @@
             });
 
             updateMpHud(players);
+            updateMpLiveScores(players);
 
             // Check win condition (only if game has been running for at least 2 seconds)
             const gameRunningTime = Date.now() - (window.mpGameStartTime || Date.now());
@@ -5598,7 +5650,33 @@
         }
 
         // Track last HUD state to prevent unnecessary updates
-        let lastHudState = { lives: -1, scores: '' };
+        let lastHudState = { lives: -1, scores: '', liveScores: '' };
+
+        // Update live scores display in score-board (replaces high score in multiplayer)
+        function updateMpLiveScores(players) {
+            if (!players || !mpLiveScores) return;
+
+            // Build a key to check if update is needed
+            const liveScoresKey = Object.entries(players).map(([id, p]) => `${id}:${p.score}`).join(',');
+            if (lastHudState.liveScores === liveScoresKey) return;
+            lastHudState.liveScores = liveScoresKey;
+
+            // Sort players by score (highest first)
+            const sortedPlayers = Object.entries(players)
+                .map(([id, p]) => ({ id, ...p }))
+                .sort((a, b) => b.score - a.score);
+
+            mpLiveScores.innerHTML = sortedPlayers.map(player => {
+                const isMe = player.id === currentUser?.uid;
+                return `
+                    <div class="mp-live-score-item ${isMe ? 'me' : ''}" style="border-color: ${player.color}40;">
+                        <div class="mp-live-score-color" style="background-color: ${player.color}; color: ${player.color};"></div>
+                        <span class="mp-live-score-name">${isMe ? 'You' : player.name.slice(0, 8)}</span>
+                        <span class="mp-live-score-value" style="color: ${player.color};">${player.score}</span>
+                    </div>
+                `;
+            }).join('');
+        }
 
         // Update multiplayer HUD (throttled)
         function updateMpHud(players) {
@@ -5657,10 +5735,14 @@
                     }
                 }
 
-                // Update my state
+                // Update my state - save finalScore as highest score achieved
+                const myCurrentFinalScore = gameData?.players?.[currentUser.uid]?.finalScore || 0;
+                const newFinalScore = Math.max(myCurrentFinalScore, score);
+
                 await dbUpdate(ref(rtdb, `games/${currentGameId}/players/${currentUser.uid}`), {
                     lives: playerLives,
                     score: 0,
+                    finalScore: newFinalScore,
                     alive: playerLives > 0
                 });
             }
@@ -5789,6 +5871,13 @@
             // Remove last standing indicator if present
             const lastStandingIndicator = document.getElementById('lastStandingIndicator');
             if (lastStandingIndicator) lastStandingIndicator.remove();
+
+            // Restore high score display (hide live scores)
+            if (highScoreDisplay) highScoreDisplay.style.display = '';
+            if (mpLiveScores) {
+                mpLiveScores.style.display = 'none';
+                mpLiveScores.innerHTML = '';
+            }
         }
 
         // Show multiplayer results
@@ -5804,13 +5893,12 @@
             const spectatorLeaveBtn = document.getElementById('spectatorLeaveBtn');
             if (spectatorLeaveBtn) spectatorLeaveBtn.remove();
 
-            // Get rankings
+            // Get rankings - use finalScore for display (persists after death)
             const players = Object.entries(gameData.players || {})
-                .map(([id, p]) => ({ id, ...p }))
+                .map(([id, p]) => ({ id, ...p, displayScore: p.finalScore || p.score || 0 }))
                 .sort((a, b) => {
-                    // Sort by lives (more = better), then by score
-                    if (b.lives !== a.lives) return b.lives - a.lives;
-                    return b.score - a.score;
+                    // Sort by finalScore (highest score achieved)
+                    return b.displayScore - a.displayScore;
                 });
 
             const winner = players[0];
@@ -5828,7 +5916,7 @@
                     <div class="mp-ranking-item ${index === 0 ? 'first' : ''}">
                         <span class="mp-ranking-position ${positionClass}">#${index + 1}</span>
                         <span class="mp-ranking-name">${player.name}</span>
-                        <span class="mp-ranking-score">${player.score}</span>
+                        <span class="mp-ranking-score">${player.displayScore}</span>
                     </div>
                 `;
             }).join('');
