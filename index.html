@@ -4955,6 +4955,7 @@
 
                 currentGameId = gameId;
                 isHost = true;
+                isMultiplayer = true;
 
                 // Set up disconnect cleanup
                 const playerRef = ref(rtdb, `games/${gameId}/players/${currentUser.uid}`);
@@ -5010,6 +5011,7 @@
                     // Already in room, just show lobby
                     currentGameId = gameId;
                     isHost = gameData.hostId === currentUser.uid;
+                    isMultiplayer = true;
                     listenToGameState(gameId);
                     showLobby(gameId, gameData);
                     return;
@@ -5054,6 +5056,7 @@
 
                 currentGameId = gameId;
                 isHost = false;
+                isMultiplayer = true;
 
                 // Apply host's settings
                 currentMode = gameData.mode;
@@ -5468,6 +5471,7 @@
             // Reset important state first
             isSpectating = false;
             playerLives = 3;
+            isPaused = false;
 
             // Apply game settings
             currentMode = gameData.mode;
@@ -5519,6 +5523,9 @@
 
             // Hide game over screen if visible
             gameOverEl.style.display = 'none';
+
+            // Force an initial draw to ensure canvas renders immediately
+            draw();
 
             console.log('Multiplayer game started, snake:', snake.length, 'segments');
         }
