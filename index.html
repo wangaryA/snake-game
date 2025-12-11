@@ -264,23 +264,16 @@
         }
 
         /* ===== PREMIUM ANIMATED BACKGROUND ===== */
-        html, body {
-            overflow: hidden;
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
             background: #05050f;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             font-family: 'Inter', sans-serif;
-            position: fixed;
-            top: 0;
-            left: 0;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
         }
 
         body::before {
@@ -401,10 +394,6 @@
             animation-delay: 2s;
             max-width: 1400px;
             width: 100%;
-            max-height: 100vh;
-            overflow-y: auto;
-            padding: 20px;
-            box-sizing: border-box;
         }
 
         @keyframes fade-in-up {
@@ -1530,22 +1519,32 @@
         /* Game Over Modal */
         .game-over {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.8);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .game-over-content {
             background: var(--bg-card);
             backdrop-filter: blur(30px);
             padding: 40px 50px;
             border-radius: 20px;
             border: 1px solid var(--glass-border);
-            display: none;
-            z-index: 1000;
             text-align: center;
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 100px rgba(255, 0, 85, 0.2);
             animation: modal-appear 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            position: relative;
         }
 
-        .game-over::before {
+        .game-over-content::before {
             content: '';
             position: absolute;
             top: 0;
@@ -1557,8 +1556,8 @@
         }
 
         @keyframes modal-appear {
-            from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         .game-over h2 {
@@ -2724,10 +2723,12 @@
                 </div>
             </div>
             <div class="game-over" id="gameOver">
-                <h2>Game Over!</h2>
-                <p>Final Score: <span id="finalScore">0</span></p>
-                <p class="new-record" id="newRecord" style="display: none;">New Personal Best!</p>
-                <button class="restart-btn" id="restartBtn">Play Again</button>
+                <div class="game-over-content">
+                    <h2>Game Over!</h2>
+                    <p>Final Score: <span id="finalScore">0</span></p>
+                    <p class="new-record" id="newRecord" style="display: none;">New Personal Best!</p>
+                    <button class="restart-btn" id="restartBtn">Play Again</button>
+                </div>
             </div>
             <div class="controls">
                 <p>Use Arrow Keys or WASD to move</p>
@@ -4754,7 +4755,7 @@
                 newRecordEl.style.display = 'none';
             }
 
-            gameOverEl.style.display = 'block';
+            gameOverEl.style.display = 'flex';
         }
 
         // Controls
