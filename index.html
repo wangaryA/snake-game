@@ -2764,13 +2764,16 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             gap: 5px;
+            width: 100%;
         }
 
         .dpad-row {
             display: flex;
             gap: 5px;
             justify-content: center;
+            align-items: center;
         }
 
         .mobile-pause-btn {
@@ -2783,6 +2786,16 @@
         .mobile-pause-btn:active {
             background: var(--secondary) !important;
             color: #1a1a2e !important;
+        }
+
+        /* Mobile Toggle Switch */
+        .mobile-toggle input:checked + .mobile-toggle-slider {
+            background: var(--primary) !important;
+        }
+
+        .mobile-toggle input:checked ~ .mobile-toggle-knob {
+            transform: translateX(22px);
+            background: #fff;
         }
 
         /* Mobile Settings Toggle Button */
@@ -2903,8 +2916,12 @@
 
             .main-container {
                 padding: 10px;
-                padding-bottom: 200px;
+                padding-bottom: 220px;
                 min-height: auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
             }
 
             /* Hide side panels on mobile */
@@ -2915,13 +2932,15 @@
 
             /* Show mobile-specific elements */
             .mobile-controls {
-                display: block;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
                 position: fixed;
                 bottom: 0;
                 left: 0;
                 right: 0;
                 background: linear-gradient(to top, rgba(10, 10, 26, 0.98) 0%, rgba(10, 10, 26, 0.9) 80%, transparent 100%);
-                padding: 15px 10px 25px;
+                padding: 15px 10px 30px;
                 z-index: 100;
             }
 
@@ -2954,6 +2973,9 @@
                 border-radius: 15px;
                 width: 100%;
                 max-width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
             }
 
             /* Compact header */
@@ -2961,8 +2983,10 @@
                 flex-direction: row;
                 justify-content: space-between;
                 align-items: center;
-                padding: 5px 0;
+                padding: 5px 10px;
                 margin-bottom: 8px;
+                width: 100%;
+                box-sizing: border-box;
             }
 
             .header h1 {
@@ -2987,22 +3011,32 @@
                 padding: 8px;
                 margin-bottom: 8px;
                 font-size: 0.85rem;
+                width: 100%;
+                box-sizing: border-box;
+                justify-content: center;
             }
 
             /* Canvas sizing for mobile */
             .canvas-area {
                 margin: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
 
             .canvas-wrapper {
                 width: 100%;
-                max-width: calc(100vw - 40px);
+                max-width: calc(100vw - 20px);
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
 
             #gameCanvas {
                 width: 100% !important;
                 height: auto !important;
-                max-height: calc(100vh - 350px);
+                max-width: 90vw;
+                max-height: calc(100vh - 320px);
                 max-height: calc(100dvh - 350px);
             }
 
@@ -3783,13 +3817,24 @@
 
         <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-top: 1px solid var(--glass-border); margin-top: 10px;">
             <span style="color: var(--text-secondary); font-size: 0.85rem;">Obstacles</span>
-            <label class="toggle-switch" style="position: relative; width: 50px; height: 26px;">
-                <input type="checkbox" id="mobileObstaclesToggle" style="opacity: 0; width: 0; height: 0;">
-                <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.2); border-radius: 26px; transition: 0.3s;"></span>
+            <label class="mobile-toggle" style="position: relative; display: inline-block; width: 50px; height: 28px; cursor: pointer;">
+                <input type="checkbox" id="mobileObstaclesToggle" style="opacity: 0; width: 0; height: 0; position: absolute;">
+                <span class="mobile-toggle-slider" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.2); border-radius: 28px; transition: 0.3s;"></span>
+                <span class="mobile-toggle-knob" style="position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; background: #fff; border-radius: 50%; transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></span>
             </label>
         </div>
 
         <button class="mobile-play-btn" id="mobilePlayBtn" style="margin-top: 20px;">▶ START GAME</button>
+
+        <!-- Mobile Leaderboard -->
+        <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--glass-border);">
+            <h4 style="color: var(--primary); font-family: 'Orbitron', sans-serif; font-size: 0.9rem; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+                🏆 Global Leaderboard
+            </h4>
+            <ul class="mobile-leaderboard-list" id="mobileLeaderboardList" style="list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto;">
+                <li style="color: var(--text-secondary); font-size: 0.85rem; padding: 8px; text-align: center;">Loading...</li>
+            </ul>
+        </div>
     </div>
 
     <!-- Background Effects -->
@@ -5301,21 +5346,28 @@
         }
 
         async function loadLeaderboard() {
+            const mobileLeaderboardList = document.getElementById('mobileLeaderboardList');
+
             try {
                 const q = query(collection(db, 'scores'), orderBy('score', 'desc'), limit(10));
                 const snapshot = await getDocs(q);
 
                 if (snapshot.empty) {
                     leaderboardList.innerHTML = '<li class="no-scores">No scores yet. Be the first!</li>';
+                    if (mobileLeaderboardList) {
+                        mobileLeaderboardList.innerHTML = '<li style="color: var(--text-secondary); font-size: 0.85rem; padding: 8px; text-align: center;">No scores yet!</li>';
+                    }
                     return;
                 }
 
                 leaderboardList.innerHTML = '';
+                let mobileHtml = '';
                 let rank = 1;
                 snapshot.forEach((doc) => {
                     const data = doc.data();
                     const isCurrentUser = currentUser && doc.id === currentUser.uid;
                     const rankClass = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : 'normal';
+                    const rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
 
                     // Build settings badges HTML
                     let settingsHtml = '';
@@ -5342,11 +5394,28 @@
                             <span class="player-score">${data.score}</span>
                         </li>
                     `;
+
+                    // Mobile leaderboard (simpler)
+                    mobileHtml += `
+                        <li style="display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: ${isCurrentUser ? 'rgba(0, 255, 136, 0.15)' : 'rgba(255,255,255,0.05)'}; border-radius: 8px; margin-bottom: 6px; ${isCurrentUser ? 'border: 1px solid var(--primary);' : ''}">
+                            <span style="font-size: 0.9rem; min-width: 30px;">${rankEmoji}</span>
+                            <span style="flex: 1; color: ${isCurrentUser ? 'var(--primary)' : 'var(--text-primary)'}; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0 8px;">${data.displayName || 'Anonymous'}</span>
+                            <span style="color: var(--gold); font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: 600;">${data.score}</span>
+                        </li>
+                    `;
                     rank++;
                 });
+
+                // Update mobile leaderboard
+                if (mobileLeaderboardList) {
+                    mobileLeaderboardList.innerHTML = mobileHtml;
+                }
             } catch (error) {
                 console.error("Error loading leaderboard:", error);
                 leaderboardList.innerHTML = '<li class="no-scores">Error loading leaderboard</li>';
+                if (mobileLeaderboardList) {
+                    mobileLeaderboardList.innerHTML = '<li style="color: var(--text-secondary); font-size: 0.85rem; padding: 8px; text-align: center;">Error loading</li>';
+                }
             }
         }
 
@@ -5431,6 +5500,20 @@
             newRecordEl.style.display = 'none';
             if (gameLoop) clearInterval(gameLoop);
             gameLoop = setInterval(update, gameSpeed);
+
+            // Auto-center view on mobile when game starts
+            if (window.innerWidth <= 600) {
+                setTimeout(() => {
+                    const canvas = document.getElementById('gameCanvas');
+                    if (canvas) {
+                        canvas.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center',
+                            inline: 'center'
+                        });
+                    }
+                }, 100);
+            }
         }
 
         function spawnFood() {
@@ -6163,8 +6246,15 @@
         if (mobileObstaclesToggle) {
             mobileObstaclesToggle.addEventListener('change', () => {
                 obstaclesEnabled = mobileObstaclesToggle.checked;
+                // Sync with desktop toggle (which uses class, not checkbox)
                 const mainToggle = document.getElementById('obstaclesToggle');
-                if (mainToggle) mainToggle.checked = obstaclesEnabled;
+                if (mainToggle) {
+                    if (obstaclesEnabled) {
+                        mainToggle.classList.add('active');
+                    } else {
+                        mainToggle.classList.remove('active');
+                    }
+                }
             });
         }
 
