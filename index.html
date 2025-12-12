@@ -125,14 +125,14 @@
             --grid-color: rgba(247, 37, 133, 0.05);
         }
 
-        /* ===== LOADING SCREEN ===== */
+        /* ===== PIXEL ART LOADING SCREEN ===== */
         .loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 50%, #0a0a1a 100%);
+            background: #0a0a0a;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -146,121 +146,223 @@
             visibility: hidden;
         }
 
-        .loading-logo {
-            position: relative;
-            margin-bottom: 40px;
-        }
-
-        .loading-snake {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 4rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--primary));
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradient-shift 3s ease infinite, float 2s ease-in-out infinite;
-            text-shadow: 0 0 60px var(--primary-dim);
-            letter-spacing: 8px;
-        }
-
-        .loading-snake::after {
+        /* CRT Glow Effect */
+        .loading-screen::before {
             content: '';
             position: absolute;
-            bottom: -10px;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
-            animation: pulse-line 2s ease-in-out infinite;
+            transform: translate(-50%, -50%);
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(ellipse, rgba(74, 222, 128, 0.15) 0%, rgba(74, 222, 128, 0.05) 40%, transparent 70%);
+            pointer-events: none;
+            animation: crt-glow 2s ease-in-out infinite;
         }
 
-        @keyframes gradient-shift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+        @keyframes crt-glow {
+            0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        @keyframes pulse-line {
-            0%, 100% { opacity: 0.3; width: 60%; }
-            50% { opacity: 1; width: 100%; }
-        }
-
-        .loading-bar-container {
-            width: 300px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .loading-bar {
+        /* Scanlines Overlay */
+        .loading-scanlines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary));
-            background-size: 200% 100%;
-            border-radius: 3px;
-            width: 0%;
-            animation: loading-progress 2s ease-out forwards, shimmer 1.5s linear infinite;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15) 0px,
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 10;
         }
 
-        @keyframes loading-progress {
-            0% { width: 0%; }
-            20% { width: 20%; }
-            50% { width: 60%; }
-            80% { width: 85%; }
-            100% { width: 100%; }
+        /* Snake Circle Container */
+        .snake-loader {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin-bottom: 30px;
         }
 
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-
-        .loading-text {
-            margin-top: 20px;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.5);
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            animation: blink 1.5s ease-in-out infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
-
-        .loading-particles {
+        /* Snake Circle Track */
+        .snake-circle {
             position: absolute;
             width: 100%;
             height: 100%;
-            overflow: hidden;
-            pointer-events: none;
+            animation: rotate-snake 2s linear infinite;
         }
 
-        .particle {
+        @keyframes rotate-snake {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Individual Snake Segments */
+        .snake-segment {
             position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--primary);
-            border-radius: 50%;
-            animation: particle-float 4s ease-in-out infinite;
-            opacity: 0.6;
+            width: 12px;
+            height: 12px;
+            border: 1px solid #000;
+            box-sizing: border-box;
+            image-rendering: pixelated;
         }
 
-        @keyframes particle-float {
-            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.6; }
-            90% { opacity: 0.6; }
-            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        /* Head Segment - slightly larger with eyes */
+        .snake-segment.head {
+            width: 14px;
+            height: 14px;
+            background: #4ade80;
+            border: 1px solid #000;
+            position: absolute;
+        }
+
+        .snake-segment.head::before,
+        .snake-segment.head::after {
+            content: '';
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #000;
+            top: 2px;
+        }
+
+        .snake-segment.head::before {
+            right: 2px;
+        }
+
+        .snake-segment.head::after {
+            right: 7px;
+        }
+
+        /* Body segments with gradient colors */
+        .snake-segment.body-1 { background: #22c55e; }
+        .snake-segment.body-2 { background: #20b858; }
+        .snake-segment.body-3 { background: #1eab52; }
+        .snake-segment.body-4 { background: #1c9e4c; }
+        .snake-segment.body-5 { background: #1a9146; }
+        .snake-segment.body-6 { background: #188440; }
+        .snake-segment.body-7 { background: #16773a; }
+        .snake-segment.body-8 { background: #156a34; }
+        .snake-segment.tail { background: #15803d; }
+
+        /* Position segments in a circle (radius ~45px for 90px diameter) */
+        .snake-segment:nth-child(1) { top: 8px; left: 73px; }
+        .snake-segment:nth-child(2) { top: 18px; left: 104px; }
+        .snake-segment:nth-child(3) { top: 44px; left: 124px; }
+        .snake-segment:nth-child(4) { top: 74px; left: 124px; }
+        .snake-segment:nth-child(5) { top: 100px; left: 104px; }
+        .snake-segment:nth-child(6) { top: 116px; left: 73px; }
+        .snake-segment:nth-child(7) { top: 100px; left: 42px; }
+        .snake-segment:nth-child(8) { top: 74px; left: 22px; }
+        .snake-segment:nth-child(9) { top: 44px; left: 22px; }
+        .snake-segment:nth-child(10) { top: 18px; left: 42px; }
+
+        /* Pixel Food in Center */
+        .pixel-food {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border: 1px solid #000;
+            animation: food-pulse 0.8s ease-in-out infinite;
+            image-rendering: pixelated;
+        }
+
+        .pixel-food::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 2px;
+            width: 3px;
+            height: 3px;
+            background: #22c55e;
+            border: 1px solid #000;
+        }
+
+        @keyframes food-pulse {
+            0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.8); }
+        }
+
+        /* Pixel Loading Text */
+        .loading-text-pixel {
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: bold;
+            color: #4ade80;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            image-rendering: pixelated;
+            text-shadow:
+                2px 0 0 #000,
+                -2px 0 0 #000,
+                0 2px 0 #000,
+                0 -2px 0 #000,
+                0 0 10px rgba(74, 222, 128, 0.5);
+        }
+
+        /* Animated Dots */
+        .loading-dots {
+            display: inline-block;
+            width: 24px;
+            text-align: left;
+        }
+
+        .loading-dots span {
+            animation: dot-blink 1.5s infinite;
+            opacity: 0;
+        }
+
+        .loading-dots span:nth-child(1) { animation-delay: 0s; }
+        .loading-dots span:nth-child(2) { animation-delay: 0.3s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes dot-blink {
+            0%, 20% { opacity: 0; }
+            40%, 100% { opacity: 1; }
+        }
+
+        /* Retro Border Frame */
+        .loading-frame {
+            position: relative;
+            padding: 40px;
+            border: 3px solid #22c55e;
+            box-shadow:
+                inset 0 0 20px rgba(74, 222, 128, 0.1),
+                0 0 30px rgba(74, 222, 128, 0.2);
+        }
+
+        .loading-frame::before,
+        .loading-frame::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border: 2px solid #4ade80;
+        }
+
+        .loading-frame::before {
+            top: -2px;
+            left: -2px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .loading-frame::after {
+            bottom: -2px;
+            right: -2px;
+            border-left: none;
+            border-top: none;
         }
 
         /* ===== PREMIUM ANIMATED BACKGROUND ===== */
@@ -1836,20 +1938,23 @@
 
         .mp-join-section {
             display: flex;
-            gap: 8px;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .room-code-input {
-            flex: 1;
+            width: 100%;
             background: rgba(0, 0, 0, 0.4);
             border: 1px solid var(--glass-border);
             border-radius: 8px;
-            padding: 12px 16px;
+            padding: 14px 16px;
             color: var(--text-primary);
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
-            letter-spacing: 2px;
+            font-size: 1rem;
+            letter-spacing: 3px;
             text-transform: uppercase;
+            text-align: center;
+            box-sizing: border-box;
         }
 
         .room-code-input:focus {
@@ -1866,6 +1971,7 @@
 
         .join-room-btn {
             background: var(--secondary);
+            width: 100%;
         }
 
         /* Multiplayer Lobby Modal */
@@ -2621,33 +2727,146 @@
             font-size: 0.75rem;
         }
 
-        /* Mobile */
+        /* Mobile Controls - Hidden by default */
         .mobile-controls {
             display: none;
-            margin-top: 20px;
         }
 
         .mobile-btn {
-            width: 60px;
-            height: 60px;
-            background: rgba(0, 255, 136, 0.2);
-            border: 2px solid #00ff88;
-            border-radius: 10px;
-            color: #00ff88;
-            font-size: 1.5rem;
+            width: 70px;
+            height: 70px;
+            background: rgba(0, 255, 136, 0.25);
+            border: 2px solid var(--primary);
+            border-radius: 15px;
+            color: var(--primary);
+            font-size: 1.8rem;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.1s ease;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            user-select: none;
         }
 
         .mobile-btn:active {
-            background: #00ff88;
+            background: var(--primary);
             color: #1a1a2e;
+            transform: scale(0.95);
         }
 
         .btn-row {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 5px;
+        }
+
+        /* D-Pad Layout */
+        .mobile-dpad {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dpad-row {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .mobile-pause-btn {
+            background: rgba(255, 255, 255, 0.15) !important;
+            border-color: var(--glass-border) !important;
+            color: var(--text-secondary) !important;
+            font-size: 1rem !important;
+        }
+
+        .mobile-pause-btn:active {
+            background: var(--secondary) !important;
+            color: #1a1a2e !important;
+        }
+
+        /* Mobile Settings Toggle Button */
+        .mobile-settings-toggle {
+            display: none;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            width: 44px;
+            height: 44px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            cursor: pointer;
+            z-index: 1000;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .mobile-settings-toggle.active {
+            background: var(--primary);
+            color: #1a1a2e;
+        }
+
+        /* Mobile Quick Play Button */
+        .mobile-play-btn {
+            display: none;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 12px;
+            color: #0a0a1a;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .mobile-play-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Mobile Settings Panel */
+        .mobile-settings-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 80%;
+            max-width: 320px;
+            height: 100%;
+            background: linear-gradient(180deg, #0d0d1a 0%, #1a1a3e 100%);
+            border-right: 2px solid var(--primary-dim);
+            z-index: 9999;
+            overflow-y: auto;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            padding: 60px 15px 20px;
+        }
+
+        .mobile-settings-panel.active {
+            transform: translateX(0);
+        }
+
+        .mobile-settings-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-settings-overlay.active {
+            opacity: 1;
         }
 
         @media (max-width: 1200px) {
@@ -2669,55 +2888,908 @@
             }
         }
 
-        @media (max-width: 500px) {
+        /* ===== MOBILE LAYOUT (max-width: 600px) ===== */
+        @media (max-width: 600px) {
+            body {
+                padding: 0;
+                min-height: 100vh;
+                min-height: -webkit-fill-available;
+                overflow-x: hidden;
+            }
+
+            html {
+                height: -webkit-fill-available;
+            }
+
+            .main-container {
+                padding: 10px;
+                padding-bottom: 200px;
+                min-height: auto;
+            }
+
+            /* Hide side panels on mobile */
+            .left-panel,
+            .side-panel {
+                display: none !important;
+            }
+
+            /* Show mobile-specific elements */
             .mobile-controls {
+                display: block;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: linear-gradient(to top, rgba(10, 10, 26, 0.98) 0%, rgba(10, 10, 26, 0.9) 80%, transparent 100%);
+                padding: 15px 10px 25px;
+                z-index: 100;
+            }
+
+            .mobile-settings-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .mobile-settings-panel {
                 display: block;
             }
 
-            .controls {
-                display: none;
+            .mobile-settings-overlay {
+                display: block;
+                pointer-events: none;
             }
 
-            h1 {
-                font-size: 1.8rem;
+            .mobile-settings-overlay.active {
+                pointer-events: auto;
             }
 
+            .mobile-play-btn {
+                display: block;
+            }
+
+            /* Compact game container */
+            .game-container {
+                padding: 10px;
+                border-radius: 15px;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            /* Compact header */
             .header {
-                flex-direction: column;
-                gap: 10px;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 5px 0;
+                margin-bottom: 8px;
             }
 
-            .setting-options {
+            .header h1 {
+                font-size: 1.4rem;
+                margin: 0;
+            }
+
+            #authContainer {
+                transform: scale(0.85);
+                transform-origin: right center;
+            }
+
+            .auth-btn {
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+
+            /* Compact score board */
+            .score-board {
                 flex-wrap: wrap;
+                gap: 8px;
+                padding: 8px;
+                margin-bottom: 8px;
+                font-size: 0.85rem;
             }
 
-            .setting-btn {
-                min-width: 60px;
+            /* Canvas sizing for mobile */
+            .canvas-area {
+                margin: 0;
+            }
+
+            .canvas-wrapper {
+                width: 100%;
+                max-width: calc(100vw - 40px);
+            }
+
+            #gameCanvas {
+                width: 100% !important;
+                height: auto !important;
+                max-height: calc(100vh - 350px);
+                max-height: calc(100dvh - 350px);
+            }
+
+            /* Hide desktop controls text */
+            .controls {
+                display: none !important;
+            }
+
+            /* Mode indicator compact */
+            .mode-indicator {
+                font-size: 0.7rem;
+                padding: 4px 8px;
+            }
+
+            /* Game over overlay */
+            .game-over {
+                padding: 15px;
+            }
+
+            .game-over-content h2 {
+                font-size: 1.5rem;
+            }
+
+            .restart-btn {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+
+            /* Power-ups display */
+            .active-powerups {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+
+            .powerup-indicator {
+                font-size: 0.7rem;
+                padding: 3px 8px;
+            }
+
+            /* Help button repositioned for mobile */
+            .help-btn {
+                bottom: 210px;
+                right: 10px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            /* Move achievements toggle to right side on mobile */
+            .achievements-toggle {
+                left: auto;
+                right: 10px;
+                top: 10px;
+                width: 44px;
+                height: 44px;
+                font-size: 1.2rem;
+            }
+
+            /* Adjust achievements panel position on mobile */
+            .achievements-panel {
+                left: 10px;
+                right: 10px;
+                top: 60px;
+                width: auto;
+                max-width: none;
+            }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 380px) {
+            .mobile-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+
+            .header h1 {
+                font-size: 1.2rem;
+            }
+
+            .score-board {
+                font-size: 0.75rem;
+            }
+
+            #gameCanvas {
+                max-height: calc(100vh - 320px);
+                max-height: calc(100dvh - 320px);
+            }
+
+            .help-btn {
+                bottom: 190px;
+            }
+        }
+
+        /* ===== GUIDE POPUP MODAL ===== */
+        .guide-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .guide-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .guide-container {
+            background: linear-gradient(145deg, #0d0d1a 0%, #1a1a3e 100%);
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            max-width: 800px;
+            max-height: 85vh;
+            width: 100%;
+            overflow: hidden;
+            box-shadow: 0 0 40px var(--primary-dim), inset 0 0 60px rgba(0, 0, 0, 0.5);
+            animation: guide-slide-in 0.3s ease;
+        }
+
+        @keyframes guide-slide-in {
+            from {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .guide-header {
+            background: linear-gradient(90deg, var(--primary-dim), transparent);
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .guide-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin: 0;
+            text-shadow: 0 0 20px var(--primary-dim);
+        }
+
+        .guide-close-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .guide-close-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: rotate(90deg);
+        }
+
+        .guide-tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid var(--glass-border);
+            overflow-x: auto;
+        }
+
+        .guide-tab {
+            flex: 1;
+            min-width: 100px;
+            padding: 15px 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .guide-tab:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .guide-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .guide-content {
+            padding: 25px;
+            overflow-y: auto;
+            max-height: calc(85vh - 140px);
+        }
+
+        .guide-section {
+            display: none;
+        }
+
+        .guide-section.active {
+            display: block;
+            animation: guide-fade-in 0.3s ease;
+        }
+
+        @keyframes guide-fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .guide-section h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin: 0 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .guide-section p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .guide-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .guide-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.1);
+        }
+
+        .guide-card-icon {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .guide-card-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .guide-card-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .guide-key {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: var(--primary);
+            margin: 2px;
+        }
+
+        .guide-color-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            vertical-align: middle;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .guide-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+        }
+
+        .guide-list li {
+            padding: 10px 15px;
+            background: var(--glass);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .guide-list li strong {
+            color: var(--primary);
+            min-width: 100px;
+        }
+
+        .guide-tip {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1));
+            border: 1px solid var(--primary-dim);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .guide-tip-title {
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .guide-tip p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        /* Help Button */
+        .help-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: #0a0a1a;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 9998;
+            box-shadow: 0 4px 20px var(--primary-dim);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .help-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px var(--primary-dim);
+        }
+
+        .help-btn:active {
+            transform: scale(0.95);
+        }
+
+        @media (max-width: 600px) {
+            .guide-container {
+                max-height: 90vh;
+                border-radius: 15px;
+            }
+
+            .guide-header h2 {
+                font-size: 1.2rem;
+            }
+
+            .guide-tab {
+                padding: 12px 15px;
+                font-size: 0.85rem;
+            }
+
+            .guide-content {
+                padding: 15px;
+            }
+
+            .guide-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .help-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
+    <!-- Pixel Art Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
-        <div class="loading-particles">
-            <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
-            <div class="particle" style="left: 20%; animation-delay: 0.5s;"></div>
-            <div class="particle" style="left: 30%; animation-delay: 1s;"></div>
-            <div class="particle" style="left: 40%; animation-delay: 1.5s;"></div>
-            <div class="particle" style="left: 50%; animation-delay: 0.3s;"></div>
-            <div class="particle" style="left: 60%; animation-delay: 0.8s;"></div>
-            <div class="particle" style="left: 70%; animation-delay: 1.3s;"></div>
-            <div class="particle" style="left: 80%; animation-delay: 0.6s;"></div>
-            <div class="particle" style="left: 90%; animation-delay: 1.1s;"></div>
+        <!-- Scanlines Overlay -->
+        <div class="loading-scanlines"></div>
+
+        <!-- Retro Frame Container -->
+        <div class="loading-frame">
+            <!-- Snake Loader -->
+            <div class="snake-loader">
+                <!-- Rotating Snake Circle -->
+                <div class="snake-circle">
+                    <!-- Head -->
+                    <div class="snake-segment head"></div>
+                    <!-- Body segments (gradient from bright to dark green) -->
+                    <div class="snake-segment body-1"></div>
+                    <div class="snake-segment body-2"></div>
+                    <div class="snake-segment body-3"></div>
+                    <div class="snake-segment body-4"></div>
+                    <div class="snake-segment body-5"></div>
+                    <div class="snake-segment body-6"></div>
+                    <div class="snake-segment body-7"></div>
+                    <div class="snake-segment body-8"></div>
+                    <!-- Tail -->
+                    <div class="snake-segment tail"></div>
+                </div>
+                <!-- Pulsing Food in Center -->
+                <div class="pixel-food"></div>
+            </div>
+
+            <!-- Loading Text with Animated Dots -->
+            <div class="loading-text-pixel">
+                LOADING<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>
+            </div>
         </div>
-        <div class="loading-logo">
-            <div class="loading-snake">SNAKE</div>
+    </div>
+
+    <!-- Guide Modal -->
+    <div class="guide-modal" id="guideModal">
+        <div class="guide-container">
+            <div class="guide-header">
+                <h2>How to Play</h2>
+                <button class="guide-close-btn" id="guideCloseBtn">&times;</button>
+            </div>
+            <div class="guide-tabs">
+                <button class="guide-tab active" data-tab="basics">Basics</button>
+                <button class="guide-tab" data-tab="controls">Controls</button>
+                <button class="guide-tab" data-tab="modes">Game Modes</button>
+                <button class="guide-tab" data-tab="settings">Settings</button>
+                <button class="guide-tab" data-tab="items">Food & Power-ups</button>
+                <button class="guide-tab" data-tab="multiplayer">Multiplayer</button>
+            </div>
+            <div class="guide-content">
+                <!-- BASICS TAB -->
+                <div class="guide-section active" id="guide-basics">
+                    <h3>Welcome to Snake!</h3>
+                    <p>Snake is a classic arcade game where you control a snake that grows longer as it eats food. The goal is to eat as much food as possible without crashing into walls or your own tail!</p>
+
+                    <div class="guide-grid">
+                        <div class="guide-card">
+                            <div class="guide-card-icon">🎯</div>
+                            <div class="guide-card-title">Objective</div>
+                            <div class="guide-card-desc">Eat food to grow longer and score points. Survive as long as possible!</div>
+                        </div>
+                        <div class="guide-card">
+                            <div class="guide-card-icon">💀</div>
+                            <div class="guide-card-title">Game Over</div>
+                            <div class="guide-card-desc">You die if you hit a wall, an obstacle, or your own body.</div>
+                        </div>
+                        <div class="guide-card">
+                            <div class="guide-card-icon">🏆</div>
+                            <div class="guide-card-title">Leaderboard</div>
+                            <div class="guide-card-desc">Sign in with Google to save your scores and compete globally!</div>
+                        </div>
+                        <div class="guide-card">
+                            <div class="guide-card-icon">⚡</div>
+                            <div class="guide-card-title">Power-ups</div>
+                            <div class="guide-card-desc">Collect special items that appear every 10 seconds for temporary boosts!</div>
+                        </div>
+                    </div>
+
+                    <div class="guide-tip">
+                        <div class="guide-tip-title">💡 Pro Tip</div>
+                        <p>Plan your moves ahead! As your snake grows longer, you'll need more space to maneuver. Try to keep the center of the map clear.</p>
+                    </div>
+                </div>
+
+                <!-- CONTROLS TAB -->
+                <div class="guide-section" id="guide-controls">
+                    <h3>Keyboard Controls</h3>
+                    <p>Use either Arrow Keys or WASD to control your snake's direction:</p>
+
+                    <ul class="guide-list">
+                        <li><strong>Move Up</strong> <span class="guide-key">↑</span> or <span class="guide-key">W</span></li>
+                        <li><strong>Move Down</strong> <span class="guide-key">↓</span> or <span class="guide-key">S</span></li>
+                        <li><strong>Move Left</strong> <span class="guide-key">←</span> or <span class="guide-key">A</span></li>
+                        <li><strong>Move Right</strong> <span class="guide-key">→</span> or <span class="guide-key">D</span></li>
+                        <li><strong>Pause Game</strong> <span class="guide-key">Space</span></li>
+                        <li><strong>Fullscreen</strong> <span class="guide-key">F</span></li>
+                        <li><strong>Exit Fullscreen</strong> <span class="guide-key">Esc</span></li>
+                    </ul>
+
+                    <h3>Mobile Controls</h3>
+                    <p>On mobile devices, use the on-screen directional buttons below the game canvas to control your snake.</p>
+
+                    <div class="guide-tip">
+                        <div class="guide-tip-title">💡 Pro Tip</div>
+                        <p>You can't reverse direction instantly (e.g., go from left to right). This would cause you to crash into yourself!</p>
+                    </div>
+                </div>
+
+                <!-- GAME MODES TAB -->
+                <div class="guide-section" id="guide-modes">
+                    <h3>Game Modes</h3>
+                    <p>Choose your preferred way to play:</p>
+
+                    <div class="guide-grid">
+                        <div class="guide-card">
+                            <div class="guide-card-icon">🎮</div>
+                            <div class="guide-card-title">Classic</div>
+                            <div class="guide-card-desc">The original snake experience. Hit a wall or yourself and it's game over. Standard scoring.</div>
+                        </div>
+                        <div class="guide-card">
+                            <div class="guide-card-icon">⏱️</div>
+                            <div class="guide-card-title">Time Attack</div>
+                            <div class="guide-card-desc">Race against the clock! You have 60 seconds to score as many points as possible.</div>
+                        </div>
+                        <div class="guide-card">
+                            <div class="guide-card-icon">🌀</div>
+                            <div class="guide-card-title">No Walls</div>
+                            <div class="guide-card-desc">Walls are portals! Exit one side and appear on the opposite side. You can still die from hitting yourself.</div>
+                        </div>
+                        <div class="guide-card">
+                            <div class="guide-card-icon">🧘</div>
+                            <div class="guide-card-title">Zen</div>
+                            <div class="guide-card-desc">Relaxing mode with no death. Perfect for practice or stress-free play. Just enjoy growing your snake!</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SETTINGS TAB -->
+                <div class="guide-section" id="guide-settings">
+                    <h3>Game Settings</h3>
+
+                    <h3>Speed</h3>
+                    <ul class="guide-list">
+                        <li><strong>Slow</strong> Relaxed pace, great for beginners</li>
+                        <li><strong>Normal</strong> Balanced difficulty (default)</li>
+                        <li><strong>Fast</strong> Quick movement for experienced players</li>
+                        <li><strong>Insane</strong> Extreme speed for the ultimate challenge!</li>
+                    </ul>
+
+                    <h3>Map Size</h3>
+                    <ul class="guide-list">
+                        <li><strong>Small</strong> Compact arena, less room to maneuver</li>
+                        <li><strong>Medium</strong> Balanced play area (default)</li>
+                        <li><strong>Large</strong> Spacious field, more room to grow</li>
+                    </ul>
+
+                    <h3>Obstacles</h3>
+                    <p>Toggle obstacles ON to add random barriers on the map. Hitting an obstacle ends your game!</p>
+
+                    <h3>Themes</h3>
+                    <p>Change the visual style of the entire game:</p>
+                    <ul class="guide-list">
+                        <li><span class="guide-color-dot" style="background: #00ff88;"></span><strong>Neon</strong> Cyberpunk neon aesthetic (default)</li>
+                        <li><span class="guide-color-dot" style="background: #ffcc00;"></span><strong>Retro</strong> Classic arcade vibes</li>
+                        <li><span class="guide-color-dot" style="background: #00b4d8;"></span><strong>Ocean</strong> Cool blue underwater feel</li>
+                        <li><span class="guide-color-dot" style="background: #80b918;"></span><strong>Forest</strong> Natural green tones</li>
+                        <li><span class="guide-color-dot" style="background: #f72585;"></span><strong>Sunset</strong> Warm pink and purple gradients</li>
+                    </ul>
+
+                    <h3>Snake Skins</h3>
+                    <p>Customize your snake's appearance:</p>
+                    <ul class="guide-list">
+                        <li><span class="guide-color-dot" style="background: #00ff88;"></span><strong>Neon</strong> Classic green glow</li>
+                        <li><span class="guide-color-dot" style="background: #ff4400;"></span><strong>Fire</strong> Hot orange and red</li>
+                        <li><span class="guide-color-dot" style="background: #00bfff;"></span><strong>Ice</strong> Cool blue frost</li>
+                        <li><span class="guide-color-dot" style="background: #9b59b6;"></span><strong>Purple</strong> Royal purple haze</li>
+                        <li><span class="guide-color-dot" style="background: #ffd700;"></span><strong>Gold</strong> Luxurious golden shine</li>
+                        <li><span class="guide-color-dot" style="background: linear-gradient(90deg, red, orange, yellow, green, blue, purple);"></span><strong>Rainbow</strong> Color-shifting magic</li>
+                        <li><span class="guide-color-dot" style="background: #333;"></span><strong>Stealth</strong> Dark and mysterious</li>
+                        <li><span class="guide-color-dot" style="background: #ff69b4;"></span><strong>Candy</strong> Sweet pink treats</li>
+                    </ul>
+                </div>
+
+                <!-- FOOD & POWER-UPS TAB -->
+                <div class="guide-section" id="guide-items">
+                    <h3>Food Types</h3>
+                    <p>Different foods give different rewards:</p>
+
+                    <div class="guide-grid">
+                        <div class="guide-card">
+                            <div class="guide-card-icon"><span class="guide-color-dot" style="background: #ff0055; width: 20px; height: 20px;"></span></div>
+                            <div class="guide-card-title">Apple (60%)</div>
+                            <div class="guide-card-desc">+10 points, grows by 1 segment. The most common food.</div>
+                        </div>
+                        <div class="guide-card">
+                            <div class="guide-card-icon"><span class="guide-color-dot" style="background: #ffd700; width: 20px; height: 20px;"></span></div>
+                            <div class="guide-card-title">Golden Apple (10%)</div>
+                            <div class="guide-card-desc">+50 points, grows by 1 segment. Rare and valuable!</div>
+                        </div>
+                        <div class="guide-card">
+                            <div class="guide-card-icon"><span class="guide-color-dot" style="background: #ff66aa; width: 20px; height: 20px;"></span></div>
+                            <div class="guide-card-title">Cherry (20%)</div>
+                            <div class="guide-card-desc">+20 points, grows by 2 segments. Double the growth!</div>
+                        </div>
+                        <div class="guide-card">
+                            <div class="guide-card-icon"><span class="guide-color-dot" style="background: #8b4513; width: 20px; height: 20px;"></span></div>
+                            <div class="guide-card-title">Rotten Apple (10%)</div>
+                            <div class="guide-card-desc">-10 points, shrinks by 1 segment. Avoid if possible!</div>
+                        </div>
+                    </div>
+
+                    <h3>Power-ups</h3>
+                    <p>Special items spawn every 10 seconds. Grab them for temporary abilities!</p>
+
+                    <div class="guide-grid">
+                        <div class="guide-card">
+                            <div class="guide-card-icon"><span class="guide-color-dot" style="background: #00aaff; width: 20px; height: 20px;"></span></div>
+                            <div class="guide-card-title">Speed Boost</div>
+                            <div class="guide-card-desc">Move faster for 5 seconds. Great for quick food grabs!</div>
+                        </div>
+                        <div class="guide-card">
+                            <div class="guide-card-icon"><span class="guide-color-dot" style="background: #00ffff; width: 20px; height: 20px;"></span></div>
+                            <div class="guide-card-title">Shield</div>
+                            <div class="guide-card-desc">Invincibility for 5 seconds. Pass through walls and yourself!</div>
+                        </div>
+                        <div class="guide-card">
+                            <div class="guide-card-icon"><span class="guide-color-dot" style="background: #ffd700; width: 20px; height: 20px;"></span></div>
+                            <div class="guide-card-title">2x Score</div>
+                            <div class="guide-card-desc">Double points for 8 seconds. Maximize your eating!</div>
+                        </div>
+                        <div class="guide-card">
+                            <div class="guide-card-icon"><span class="guide-color-dot" style="background: #b400ff; width: 20px; height: 20px;"></span></div>
+                            <div class="guide-card-title">Slow Motion</div>
+                            <div class="guide-card-desc">Slows everything for 6 seconds. Easier navigation!</div>
+                        </div>
+                    </div>
+
+                    <div class="guide-tip">
+                        <div class="guide-tip-title">💡 Pro Tip</div>
+                        <p>Active power-ups are shown at the top of the screen with a countdown timer. Combine Shield with risky maneuvers!</p>
+                    </div>
+                </div>
+
+                <!-- MULTIPLAYER TAB -->
+                <div class="guide-section" id="guide-multiplayer">
+                    <h3>Multiplayer Mode</h3>
+                    <p>Play with friends in real-time! Requires signing in with Google.</p>
+
+                    <h3>Getting Started</h3>
+                    <ul class="guide-list">
+                        <li><strong>Step 1</strong> Sign in with your Google account</li>
+                        <li><strong>Step 2</strong> Select 2P or 3P under "Players"</li>
+                        <li><strong>Step 3</strong> Create a room or enter a room code to join</li>
+                        <li><strong>Step 4</strong> Share the room code with friends</li>
+                        <li><strong>Step 5</strong> Once everyone is ready, the host starts the game</li>
+                    </ul>
+
+                    <h3>How It Works</h3>
+                    <div class="guide-grid">
+                        <div class="guide-card">
+                            <div class="guide-card-icon">🏠</div>
+                            <div class="guide-card-title">Create Room</div>
+                            <div class="guide-card-desc">Host a game and share the generated room code with friends.</div>
+                        </div>
+                        <div class="guide-card">
+                            <div class="guide-card-icon">🚪</div>
+                            <div class="guide-card-title">Join Room</div>
+                            <div class="guide-card-desc">Enter a friend's room code to join their game lobby.</div>
+                        </div>
+                        <div class="guide-card">
+                            <div class="guide-card-icon">❤️</div>
+                            <div class="guide-card-title">Lives System</div>
+                            <div class="guide-card-desc">Each player has 3 lives. Lose all lives and you're eliminated!</div>
+                        </div>
+                        <div class="guide-card">
+                            <div class="guide-card-icon">👻</div>
+                            <div class="guide-card-title">Ghost Mode</div>
+                            <div class="guide-card-desc">See other players as ghosts. You can't collide with each other.</div>
+                        </div>
+                    </div>
+
+                    <div class="guide-tip">
+                        <div class="guide-tip-title">💡 Pro Tip</div>
+                        <p>The host can customize game settings (mode, speed, size, obstacles) before starting. Coordinate with your friends for the best experience!</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="loading-bar-container">
-            <div class="loading-bar"></div>
+    </div>
+
+    <!-- Help Button -->
+    <button class="help-btn" id="helpBtn" title="How to Play">?</button>
+
+    <!-- Mobile Settings Toggle -->
+    <button class="mobile-settings-toggle" id="mobileSettingsToggle" title="Settings">☰</button>
+
+    <!-- Mobile Settings Overlay -->
+    <div class="mobile-settings-overlay" id="mobileSettingsOverlay"></div>
+
+    <!-- Mobile Settings Panel -->
+    <div class="mobile-settings-panel" id="mobileSettingsPanel">
+        <h3 style="color: var(--primary); font-family: 'Orbitron', sans-serif; margin-bottom: 20px;">Settings</h3>
+
+        <!-- Players Selection -->
+        <div class="setting-group" style="margin-bottom: 15px;">
+            <label class="setting-label" style="color: var(--text-secondary); font-size: 0.85rem;">Players</label>
+            <div class="setting-options" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <button class="setting-btn mobile-players-btn active" data-players="1">1P</button>
+                <button class="setting-btn mobile-players-btn" data-players="2">2P</button>
+                <button class="setting-btn mobile-players-btn" data-players="3">3P</button>
+            </div>
         </div>
-        <div class="loading-text">Loading...</div>
+
+        <!-- Multiplayer Controls (hidden by default) -->
+        <div class="mobile-mp-controls" id="mobileMpControls" style="display: none; margin-bottom: 15px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px; border: 1px solid var(--glass-border);">
+            <button class="mobile-play-btn" id="mobileCreateRoomBtn" style="margin: 0 0 10px 0; background: linear-gradient(135deg, #ffd700, #ffaa00);">Create Room</button>
+            <div style="text-align: center; color: var(--text-secondary); font-size: 0.8rem; margin: 10px 0;">— or —</div>
+            <input type="text" id="mobileRoomCodeInput" placeholder="Enter Room Code" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.1); color: var(--text-primary); font-size: 1rem; text-transform: uppercase; text-align: center; margin-bottom: 10px;">
+            <button class="mobile-play-btn" id="mobileJoinRoomBtn" style="margin: 0; background: linear-gradient(135deg, var(--secondary), #0099cc);">Join Room</button>
+        </div>
+
+        <div class="setting-group" style="margin-bottom: 15px;">
+            <label class="setting-label" style="color: var(--text-secondary); font-size: 0.85rem;">Game Mode</label>
+            <div class="setting-options" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <button class="setting-btn mobile-mode-btn active" data-mode="classic">Classic</button>
+                <button class="setting-btn mobile-mode-btn" data-mode="timeattack">Time</button>
+                <button class="setting-btn mobile-mode-btn" data-mode="nowalls">No Walls</button>
+                <button class="setting-btn mobile-mode-btn" data-mode="zen">Zen</button>
+            </div>
+        </div>
+
+        <div class="setting-group" style="margin-bottom: 15px;">
+            <label class="setting-label" style="color: var(--text-secondary); font-size: 0.85rem;">Speed</label>
+            <div class="setting-options" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <button class="setting-btn mobile-speed-btn" data-speed="slow">Slow</button>
+                <button class="setting-btn mobile-speed-btn active" data-speed="normal">Normal</button>
+                <button class="setting-btn mobile-speed-btn" data-speed="fast">Fast</button>
+            </div>
+        </div>
+
+        <div class="setting-group" style="margin-bottom: 15px;">
+            <label class="setting-label" style="color: var(--text-secondary); font-size: 0.85rem;">Map Size</label>
+            <div class="setting-options" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <button class="setting-btn mobile-size-btn" data-size="small">Small</button>
+                <button class="setting-btn mobile-size-btn active" data-size="medium">Medium</button>
+                <button class="setting-btn mobile-size-btn" data-size="large">Large</button>
+            </div>
+        </div>
+
+        <div class="setting-group" style="margin-bottom: 15px;">
+            <label class="setting-label" style="color: var(--text-secondary); font-size: 0.85rem;">Theme</label>
+            <div class="setting-options" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <button class="setting-btn mobile-theme-btn active" data-theme="neon" style="background: #00ff88; color: #000;">Neon</button>
+                <button class="setting-btn mobile-theme-btn" data-theme="retro" style="background: #ffcc00; color: #000;">Retro</button>
+                <button class="setting-btn mobile-theme-btn" data-theme="ocean" style="background: #00b4d8; color: #000;">Ocean</button>
+                <button class="setting-btn mobile-theme-btn" data-theme="forest" style="background: #80b918; color: #000;">Forest</button>
+                <button class="setting-btn mobile-theme-btn" data-theme="sunset" style="background: #f72585; color: #fff;">Sunset</button>
+            </div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-top: 1px solid var(--glass-border); margin-top: 10px;">
+            <span style="color: var(--text-secondary); font-size: 0.85rem;">Obstacles</span>
+            <label class="toggle-switch" style="position: relative; width: 50px; height: 26px;">
+                <input type="checkbox" id="mobileObstaclesToggle" style="opacity: 0; width: 0; height: 0;">
+                <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.2); border-radius: 26px; transition: 0.3s;"></span>
+            </label>
+        </div>
+
+        <button class="mobile-play-btn" id="mobilePlayBtn" style="margin-top: 20px;">▶ START GAME</button>
     </div>
 
     <!-- Background Effects -->
@@ -2783,14 +3855,19 @@
                     Fullscreen
                 </button>
             </div>
-            <div class="mobile-controls">
-                <div class="btn-row">
-                    <button class="mobile-btn" id="upBtn">&#9650;</button>
-                </div>
-                <div class="btn-row">
-                    <button class="mobile-btn" id="leftBtn">&#9664;</button>
-                    <button class="mobile-btn" id="downBtn">&#9660;</button>
-                    <button class="mobile-btn" id="rightBtn">&#9654;</button>
+            <div class="mobile-controls" id="mobileControls">
+                <div class="mobile-dpad">
+                    <div class="dpad-row">
+                        <button class="mobile-btn" id="upBtn">▲</button>
+                    </div>
+                    <div class="dpad-row">
+                        <button class="mobile-btn" id="leftBtn">◀</button>
+                        <button class="mobile-btn mobile-pause-btn" id="mobilePauseBtn">❚❚</button>
+                        <button class="mobile-btn" id="rightBtn">▶</button>
+                    </div>
+                    <div class="dpad-row">
+                        <button class="mobile-btn" id="downBtn">▼</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -4849,18 +5926,55 @@
             }
         });
 
-        document.getElementById('upBtn').addEventListener('click', () => {
+        // Mobile controls with touch support
+        const upBtn = document.getElementById('upBtn');
+        const downBtn = document.getElementById('downBtn');
+        const leftBtn = document.getElementById('leftBtn');
+        const rightBtn = document.getElementById('rightBtn');
+
+        function handleUp(e) {
+            e.preventDefault();
+            initAudio();
             if (direction.y !== 1) nextDirection = { x: 0, y: -1 };
-        });
-        document.getElementById('downBtn').addEventListener('click', () => {
+        }
+        function handleDown(e) {
+            e.preventDefault();
+            initAudio();
             if (direction.y !== -1) nextDirection = { x: 0, y: 1 };
-        });
-        document.getElementById('leftBtn').addEventListener('click', () => {
+        }
+        function handleLeft(e) {
+            e.preventDefault();
+            initAudio();
             if (direction.x !== 1) nextDirection = { x: -1, y: 0 };
-        });
-        document.getElementById('rightBtn').addEventListener('click', () => {
+        }
+        function handleRight(e) {
+            e.preventDefault();
+            initAudio();
             if (direction.x !== -1) nextDirection = { x: 1, y: 0 };
-        });
+        }
+
+        // Use both touchstart (for mobile) and click (for desktop testing)
+        upBtn.addEventListener('touchstart', handleUp, { passive: false });
+        upBtn.addEventListener('click', handleUp);
+        downBtn.addEventListener('touchstart', handleDown, { passive: false });
+        downBtn.addEventListener('click', handleDown);
+        leftBtn.addEventListener('touchstart', handleLeft, { passive: false });
+        leftBtn.addEventListener('click', handleLeft);
+        rightBtn.addEventListener('touchstart', handleRight, { passive: false });
+        rightBtn.addEventListener('click', handleRight);
+
+        // Mobile Pause Button
+        const mobilePauseBtn = document.getElementById('mobilePauseBtn');
+        if (mobilePauseBtn) {
+            function handlePause(e) {
+                e.preventDefault();
+                isPaused = !isPaused;
+                mobilePauseBtn.textContent = isPaused ? '▶' : '❚❚';
+                draw();
+            }
+            mobilePauseBtn.addEventListener('touchstart', handlePause, { passive: false });
+            mobilePauseBtn.addEventListener('click', handlePause);
+        }
 
         restartBtn.addEventListener('click', () => {
             window.scrollTo(0, 0);
@@ -4881,6 +5995,236 @@
                 ls.classList.add('hidden');
             }
         }, 4000);
+
+        // ===== GUIDE MODAL FUNCTIONS =====
+        const guideModal = document.getElementById('guideModal');
+        const guideCloseBtn = document.getElementById('guideCloseBtn');
+        const helpBtn = document.getElementById('helpBtn');
+        const guideTabs = document.querySelectorAll('.guide-tab');
+        const guideSections = document.querySelectorAll('.guide-section');
+
+        // Check if user has seen the guide before
+        const hasSeenGuide = localStorage.getItem('snakeGuideShown');
+
+        // Open guide modal
+        function openGuide() {
+            guideModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close guide modal
+        function closeGuide() {
+            guideModal.classList.remove('active');
+            document.body.style.overflow = '';
+            localStorage.setItem('snakeGuideShown', 'true');
+        }
+
+        // Switch guide tabs
+        function switchGuideTab(tabName) {
+            guideTabs.forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === tabName);
+            });
+            guideSections.forEach(section => {
+                section.classList.toggle('active', section.id === `guide-${tabName}`);
+            });
+        }
+
+        // Event listeners for guide
+        if (helpBtn) {
+            helpBtn.addEventListener('click', openGuide);
+        }
+
+        if (guideCloseBtn) {
+            guideCloseBtn.addEventListener('click', closeGuide);
+        }
+
+        // Close on backdrop click
+        if (guideModal) {
+            guideModal.addEventListener('click', (e) => {
+                if (e.target === guideModal) {
+                    closeGuide();
+                }
+            });
+        }
+
+        // Tab switching
+        guideTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                switchGuideTab(tab.dataset.tab);
+            });
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && guideModal.classList.contains('active')) {
+                closeGuide();
+            }
+        });
+
+        // Show guide for first-time visitors after loading screen hides
+        if (!hasSeenGuide) {
+            setTimeout(() => {
+                openGuide();
+            }, 2500);
+        }
+
+        // ===== MOBILE SETTINGS PANEL =====
+        const mobileSettingsToggle = document.getElementById('mobileSettingsToggle');
+        const mobileSettingsPanel = document.getElementById('mobileSettingsPanel');
+        const mobileSettingsOverlay = document.getElementById('mobileSettingsOverlay');
+        const mobilePlayBtn = document.getElementById('mobilePlayBtn');
+        const mobileObstaclesToggle = document.getElementById('mobileObstaclesToggle');
+
+        function openMobileSettings() {
+            mobileSettingsPanel.classList.add('active');
+            mobileSettingsOverlay.classList.add('active');
+            mobileSettingsToggle.classList.add('active');
+        }
+
+        function closeMobileSettings() {
+            mobileSettingsPanel.classList.remove('active');
+            mobileSettingsOverlay.classList.remove('active');
+            mobileSettingsToggle.classList.remove('active');
+        }
+
+        if (mobileSettingsToggle) {
+            mobileSettingsToggle.addEventListener('click', () => {
+                if (mobileSettingsPanel.classList.contains('active')) {
+                    closeMobileSettings();
+                } else {
+                    openMobileSettings();
+                }
+            });
+        }
+
+        if (mobileSettingsOverlay) {
+            mobileSettingsOverlay.addEventListener('click', closeMobileSettings);
+        }
+
+        // Mobile Play Button
+        if (mobilePlayBtn) {
+            mobilePlayBtn.addEventListener('click', () => {
+                closeMobileSettings();
+                initAudio();
+                init();
+            });
+        }
+
+        // Mobile Mode Buttons
+        document.querySelectorAll('.mobile-mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mobile-mode-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('[data-mode]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const mode = btn.dataset.mode;
+                document.querySelector(`[data-mode="${mode}"]:not(.mobile-mode-btn)`)?.classList.add('active');
+                currentMode = mode;
+            });
+        });
+
+        // Mobile Speed Buttons
+        document.querySelectorAll('.mobile-speed-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mobile-speed-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('[data-speed]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const speed = btn.dataset.speed;
+                document.querySelector(`[data-speed="${speed}"]:not(.mobile-speed-btn)`)?.classList.add('active');
+                currentSpeed = speed;
+            });
+        });
+
+        // Mobile Size Buttons
+        document.querySelectorAll('.mobile-size-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mobile-size-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('[data-size]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const size = btn.dataset.size;
+                document.querySelector(`[data-size="${size}"]:not(.mobile-size-btn)`)?.classList.add('active');
+                currentSize = size;
+            });
+        });
+
+        // Mobile Theme Buttons
+        document.querySelectorAll('.mobile-theme-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mobile-theme-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.theme-btn[data-theme]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const theme = btn.dataset.theme;
+                document.querySelector(`.theme-btn[data-theme="${theme}"]`)?.classList.add('active');
+                currentTheme = theme;
+                document.body.setAttribute('data-theme', theme);
+            });
+        });
+
+        // Mobile Obstacles Toggle
+        if (mobileObstaclesToggle) {
+            mobileObstaclesToggle.addEventListener('change', () => {
+                obstaclesEnabled = mobileObstaclesToggle.checked;
+                const mainToggle = document.getElementById('obstaclesToggle');
+                if (mainToggle) mainToggle.checked = obstaclesEnabled;
+            });
+        }
+
+        // Mobile Players Selection
+        const mobileMpControls = document.getElementById('mobileMpControls');
+        const mobileCreateRoomBtn = document.getElementById('mobileCreateRoomBtn');
+        const mobileJoinRoomBtn = document.getElementById('mobileJoinRoomBtn');
+        const mobileRoomCodeInput = document.getElementById('mobileRoomCodeInput');
+
+        document.querySelectorAll('.mobile-players-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mobile-players-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('[data-players]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const players = parseInt(btn.dataset.players);
+                document.querySelector(`[data-players="${players}"]:not(.mobile-players-btn)`)?.classList.add('active');
+                playerCount = players;
+                isMultiplayer = players > 1;
+
+                // Show/hide multiplayer controls
+                if (mobileMpControls) {
+                    mobileMpControls.style.display = isMultiplayer ? 'block' : 'none';
+                }
+
+                // Also update main multiplayer controls visibility
+                const multiplayerControls = document.getElementById('multiplayerControls');
+                if (multiplayerControls) {
+                    multiplayerControls.style.display = isMultiplayer ? 'block' : 'none';
+                }
+            });
+        });
+
+        // Mobile Create Room Button
+        if (mobileCreateRoomBtn) {
+            mobileCreateRoomBtn.addEventListener('click', async () => {
+                if (!currentUser) {
+                    alert('Please sign in to create a multiplayer room');
+                    return;
+                }
+                closeMobileSettings();
+                await createMultiplayerRoom(playerCount);
+            });
+        }
+
+        // Mobile Join Room Button
+        if (mobileJoinRoomBtn) {
+            mobileJoinRoomBtn.addEventListener('click', async () => {
+                const roomCode = mobileRoomCodeInput ? mobileRoomCodeInput.value.trim().toUpperCase() : '';
+                if (!roomCode) {
+                    alert('Please enter a room code');
+                    return;
+                }
+                if (!currentUser) {
+                    alert('Please sign in to join a multiplayer room');
+                    return;
+                }
+                closeMobileSettings();
+                await joinMultiplayerRoom(roomCode);
+            });
+        }
 
         // ===== MULTIPLAYER FUNCTIONS =====
 
