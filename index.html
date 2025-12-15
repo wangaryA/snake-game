@@ -3147,6 +3147,32 @@
             }
         }
 
+        /* ===== PWA STANDALONE MODE ===== */
+        @media (display-mode: standalone) {
+            .main-container {
+                padding-top: 30px;
+            }
+
+            .mobile-settings-toggle {
+                top: 30px;
+            }
+
+            .mobile-controls {
+                bottom: 10px;
+            }
+        }
+
+        /* iOS PWA standalone */
+        @media (display-mode: standalone) and (max-width: 600px) {
+            .main-container {
+                padding-top: calc(env(safe-area-inset-top, 20px) + 10px);
+            }
+
+            .header {
+                margin-top: 10px;
+            }
+        }
+
         /* ===== GUIDE POPUP MODAL ===== */
         .guide-modal {
             display: none;
