@@ -134,18 +134,14 @@
             --grid-color: rgba(247, 37, 133, 0.05);
         }
 
-        /* ===== PIXEL ART LOADING SCREEN ===== */
+        /* ===== NEON SNAKE LOADING SCREEN ===== */
         .loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #0a0a0a;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            background: #000000;
             z-index: 9999;
             transition: opacity 0.8s ease, visibility 0.8s ease;
         }
@@ -155,23 +151,12 @@
             visibility: hidden;
         }
 
-        /* CRT Glow Effect */
-        .loading-screen::before {
-            content: '';
+        #loadingCanvas {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 280px;
-            height: 280px;
-            background: radial-gradient(ellipse, rgba(74, 222, 128, 0.15) 0%, rgba(74, 222, 128, 0.05) 40%, transparent 70%);
-            pointer-events: none;
-            animation: crt-glow 2s ease-in-out infinite;
-        }
-
-        @keyframes crt-glow {
-            0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
 
         /* Scanlines Overlay */
@@ -183,195 +168,13 @@
             height: 100%;
             background: repeating-linear-gradient(
                 0deg,
-                rgba(0, 0, 0, 0.15) 0px,
-                rgba(0, 0, 0, 0.15) 1px,
+                rgba(0, 0, 0, 0.1) 0px,
+                rgba(0, 0, 0, 0.1) 1px,
                 transparent 1px,
-                transparent 2px
+                transparent 3px
             );
             pointer-events: none;
             z-index: 10;
-        }
-
-        /* Snake Circle Container */
-        .snake-loader {
-            position: relative;
-            width: 160px;
-            height: 160px;
-            margin-bottom: 30px;
-        }
-
-        /* Snake Circle Track */
-        .snake-circle {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            animation: rotate-snake 2s linear infinite;
-        }
-
-        @keyframes rotate-snake {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Individual Snake Segments */
-        .snake-segment {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            border: 1px solid #000;
-            box-sizing: border-box;
-            image-rendering: pixelated;
-        }
-
-        /* Head Segment - slightly larger with eyes */
-        .snake-segment.head {
-            width: 14px;
-            height: 14px;
-            background: #4ade80;
-            border: 1px solid #000;
-            position: absolute;
-        }
-
-        .snake-segment.head::before,
-        .snake-segment.head::after {
-            content: '';
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: #000;
-            top: 2px;
-        }
-
-        .snake-segment.head::before {
-            right: 2px;
-        }
-
-        .snake-segment.head::after {
-            right: 7px;
-        }
-
-        /* Body segments with gradient colors */
-        .snake-segment.body-1 { background: #22c55e; }
-        .snake-segment.body-2 { background: #20b858; }
-        .snake-segment.body-3 { background: #1eab52; }
-        .snake-segment.body-4 { background: #1c9e4c; }
-        .snake-segment.body-5 { background: #1a9146; }
-        .snake-segment.body-6 { background: #188440; }
-        .snake-segment.body-7 { background: #16773a; }
-        .snake-segment.body-8 { background: #156a34; }
-        .snake-segment.tail { background: #15803d; }
-
-        /* Position segments in a circle (radius ~45px for 90px diameter) */
-        .snake-segment:nth-child(1) { top: 8px; left: 73px; }
-        .snake-segment:nth-child(2) { top: 18px; left: 104px; }
-        .snake-segment:nth-child(3) { top: 44px; left: 124px; }
-        .snake-segment:nth-child(4) { top: 74px; left: 124px; }
-        .snake-segment:nth-child(5) { top: 100px; left: 104px; }
-        .snake-segment:nth-child(6) { top: 116px; left: 73px; }
-        .snake-segment:nth-child(7) { top: 100px; left: 42px; }
-        .snake-segment:nth-child(8) { top: 74px; left: 22px; }
-        .snake-segment:nth-child(9) { top: 44px; left: 22px; }
-        .snake-segment:nth-child(10) { top: 18px; left: 42px; }
-
-        /* Pixel Food in Center */
-        .pixel-food {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 8px;
-            height: 8px;
-            background: #ef4444;
-            border: 1px solid #000;
-            animation: food-pulse 0.8s ease-in-out infinite;
-            image-rendering: pixelated;
-        }
-
-        .pixel-food::after {
-            content: '';
-            position: absolute;
-            top: -4px;
-            left: 2px;
-            width: 3px;
-            height: 3px;
-            background: #22c55e;
-            border: 1px solid #000;
-        }
-
-        @keyframes food-pulse {
-            0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.8); }
-        }
-
-        /* Pixel Loading Text */
-        .loading-text-pixel {
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-            font-weight: bold;
-            color: #4ade80;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            image-rendering: pixelated;
-            text-shadow:
-                2px 0 0 #000,
-                -2px 0 0 #000,
-                0 2px 0 #000,
-                0 -2px 0 #000,
-                0 0 10px rgba(74, 222, 128, 0.5);
-        }
-
-        /* Animated Dots */
-        .loading-dots {
-            display: inline-block;
-            width: 24px;
-            text-align: left;
-        }
-
-        .loading-dots span {
-            animation: dot-blink 1.5s infinite;
-            opacity: 0;
-        }
-
-        .loading-dots span:nth-child(1) { animation-delay: 0s; }
-        .loading-dots span:nth-child(2) { animation-delay: 0.3s; }
-        .loading-dots span:nth-child(3) { animation-delay: 0.6s; }
-
-        @keyframes dot-blink {
-            0%, 20% { opacity: 0; }
-            40%, 100% { opacity: 1; }
-        }
-
-        /* Retro Border Frame */
-        .loading-frame {
-            position: relative;
-            padding: 40px;
-            border: 3px solid #22c55e;
-            box-shadow:
-                inset 0 0 20px rgba(74, 222, 128, 0.1),
-                0 0 30px rgba(74, 222, 128, 0.2);
-        }
-
-        .loading-frame::before,
-        .loading-frame::after {
-            content: '';
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border: 2px solid #4ade80;
-        }
-
-        .loading-frame::before {
-            top: -2px;
-            left: -2px;
-            border-right: none;
-            border-bottom: none;
-        }
-
-        .loading-frame::after {
-            bottom: -2px;
-            right: -2px;
-            border-left: none;
-            border-top: none;
         }
 
         /* ===== PREMIUM ANIMATED BACKGROUND ===== */
@@ -3502,41 +3305,262 @@
             document.documentElement.style.setProperty('--vh', vh + 'px');
         })();
     </script>
-    <!-- Pixel Art Loading Screen -->
+    <!-- Neon Snake Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
-        <!-- Scanlines Overlay -->
+        <canvas id="loadingCanvas"></canvas>
         <div class="loading-scanlines"></div>
-
-        <!-- Retro Frame Container -->
-        <div class="loading-frame">
-            <!-- Snake Loader -->
-            <div class="snake-loader">
-                <!-- Rotating Snake Circle -->
-                <div class="snake-circle">
-                    <!-- Head -->
-                    <div class="snake-segment head"></div>
-                    <!-- Body segments (gradient from bright to dark green) -->
-                    <div class="snake-segment body-1"></div>
-                    <div class="snake-segment body-2"></div>
-                    <div class="snake-segment body-3"></div>
-                    <div class="snake-segment body-4"></div>
-                    <div class="snake-segment body-5"></div>
-                    <div class="snake-segment body-6"></div>
-                    <div class="snake-segment body-7"></div>
-                    <div class="snake-segment body-8"></div>
-                    <!-- Tail -->
-                    <div class="snake-segment tail"></div>
-                </div>
-                <!-- Pulsing Food in Center -->
-                <div class="pixel-food"></div>
-            </div>
-
-            <!-- Loading Text with Animated Dots -->
-            <div class="loading-text-pixel">
-                LOADING<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>
-            </div>
-        </div>
     </div>
+
+    <script>
+    // Neon Snake Loading Animation
+    (function() {
+        const canvas = document.getElementById('loadingCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // High DPI support
+        function setupCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = rect.height + 'px';
+        }
+        setupCanvas();
+        window.addEventListener('resize', setupCanvas);
+
+        // Snake configuration
+        const SEGMENT_COUNT = 18;
+        const SEGMENT_SIZE = 14;
+        const SEGMENT_SPACING = 0.08;
+        const SPEED = 0.012;
+
+        // Colors
+        const NEON_GREEN = '#00ff88';
+        const NEON_GREEN_DARK = '#00cc66';
+
+        // Snake state
+        let time = 0;
+        const segments = [];
+        const trails = [];
+        const particles = [];
+
+        // Initialize segments
+        for (let i = 0; i < SEGMENT_COUNT; i++) {
+            segments.push({ x: 0, y: 0, angle: 0 });
+        }
+
+        // Figure-8 / Infinity path function
+        function getPathPosition(t, width, height) {
+            const scale = Math.min(width, height) * 0.28;
+            const centerX = width / 2;
+            const centerY = height / 2;
+
+            // Lemniscate of Bernoulli (figure-8)
+            const a = scale;
+            const sint = Math.sin(t);
+            const cost = Math.cos(t);
+            const denom = 1 + sint * sint;
+
+            const x = centerX + (a * cost) / denom;
+            const y = centerY + (a * sint * cost) / denom;
+
+            return { x, y };
+        }
+
+        // Get angle of movement
+        function getPathAngle(t, width, height) {
+            const delta = 0.01;
+            const p1 = getPathPosition(t, width, height);
+            const p2 = getPathPosition(t + delta, width, height);
+            return Math.atan2(p2.y - p1.y, p2.x - p1.x);
+        }
+
+        // Add trail point
+        function addTrail(x, y, size, alpha) {
+            trails.push({ x, y, size, alpha, life: 1 });
+            if (trails.length > 150) trails.shift();
+        }
+
+        // Add particle
+        function addParticle(x, y) {
+            if (Math.random() > 0.3) return;
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 2 + 1;
+            particles.push({
+                x, y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                life: 1,
+                size: Math.random() * 3 + 1
+            });
+        }
+
+        // Update particles
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.025;
+                p.vx *= 0.98;
+                p.vy *= 0.98;
+                if (p.life <= 0) particles.splice(i, 1);
+            }
+        }
+
+        // Draw glow circle
+        function drawGlowSegment(x, y, size, alpha, isHead) {
+            const pulseScale = 1 + Math.sin(time * 4) * 0.1;
+            const actualSize = size * pulseScale;
+
+            // Outer glow layers
+            for (let i = 4; i >= 1; i--) {
+                const glowSize = actualSize + i * 8;
+                const glowAlpha = alpha * 0.15 / i;
+                ctx.beginPath();
+                ctx.arc(x, y, glowSize, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 255, 136, ${glowAlpha})`;
+                ctx.fill();
+            }
+
+            // Main segment
+            const gradient = ctx.createRadialGradient(x, y, 0, x, y, actualSize);
+            gradient.addColorStop(0, `rgba(200, 255, 220, ${alpha})`);
+            gradient.addColorStop(0.5, `rgba(0, 255, 136, ${alpha})`);
+            gradient.addColorStop(1, `rgba(0, 200, 100, ${alpha * 0.8})`);
+
+            ctx.beginPath();
+            ctx.arc(x, y, actualSize, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Inner bright core
+            ctx.beginPath();
+            ctx.arc(x, y, actualSize * 0.4, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.6})`;
+            ctx.fill();
+
+            // Eyes for head
+            if (isHead) {
+                const eyeOffset = actualSize * 0.4;
+                const eyeSize = actualSize * 0.25;
+                const angle = segments[0].angle;
+
+                // Calculate eye positions perpendicular to movement
+                const perpAngle = angle + Math.PI / 2;
+                const eyeX1 = x + Math.cos(angle) * eyeOffset * 0.5 + Math.cos(perpAngle) * eyeOffset * 0.6;
+                const eyeY1 = y + Math.sin(angle) * eyeOffset * 0.5 + Math.sin(perpAngle) * eyeOffset * 0.6;
+                const eyeX2 = x + Math.cos(angle) * eyeOffset * 0.5 - Math.cos(perpAngle) * eyeOffset * 0.6;
+                const eyeY2 = y + Math.sin(angle) * eyeOffset * 0.5 - Math.sin(perpAngle) * eyeOffset * 0.6;
+
+                // Draw eyes
+                ctx.beginPath();
+                ctx.arc(eyeX1, eyeY1, eyeSize, 0, Math.PI * 2);
+                ctx.fillStyle = '#000';
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(eyeX2, eyeY2, eyeSize, 0, Math.PI * 2);
+                ctx.fillStyle = '#000';
+                ctx.fill();
+            }
+        }
+
+        // Draw trail
+        function drawTrails() {
+            for (let i = 0; i < trails.length; i++) {
+                const t = trails[i];
+                t.life -= 0.02;
+                if (t.life <= 0) continue;
+
+                const alpha = t.alpha * t.life * 0.4;
+                ctx.beginPath();
+                ctx.arc(t.x, t.y, t.size * t.life, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 255, 136, ${alpha})`;
+                ctx.fill();
+            }
+            // Clean up dead trails
+            for (let i = trails.length - 1; i >= 0; i--) {
+                if (trails[i].life <= 0) trails.splice(i, 1);
+            }
+        }
+
+        // Draw particles
+        function drawParticles() {
+            for (const p of particles) {
+                const alpha = p.life * 0.8;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 255, 200, ${alpha})`;
+                ctx.fill();
+
+                // Particle glow
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size * p.life * 2, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 255, 136, ${alpha * 0.3})`;
+                ctx.fill();
+            }
+        }
+
+        // Main animation loop
+        function animate() {
+            const rect = canvas.getBoundingClientRect();
+            const width = rect.width;
+            const height = rect.height;
+
+            // Clear with pure black
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, width, height);
+
+            // Update time
+            time += SPEED;
+
+            // Update segment positions
+            for (let i = 0; i < SEGMENT_COUNT; i++) {
+                const segmentTime = time - i * SEGMENT_SPACING;
+                const pos = getPathPosition(segmentTime, width, height);
+                const angle = getPathAngle(segmentTime, width, height);
+
+                segments[i].x = pos.x;
+                segments[i].y = pos.y;
+                segments[i].angle = angle;
+
+                // Add trail for each segment
+                if (i % 2 === 0) {
+                    addTrail(pos.x, pos.y, SEGMENT_SIZE * (1 - i / SEGMENT_COUNT * 0.5), 1 - i / SEGMENT_COUNT * 0.3);
+                }
+            }
+
+            // Add particles from head
+            addParticle(segments[0].x, segments[0].y);
+
+            // Update and draw
+            updateParticles();
+            drawTrails();
+            drawParticles();
+
+            // Draw segments (back to front)
+            for (let i = SEGMENT_COUNT - 1; i >= 0; i--) {
+                const seg = segments[i];
+                const sizeFactor = 1 - (i / SEGMENT_COUNT) * 0.4;
+                const alphaFactor = 1 - (i / SEGMENT_COUNT) * 0.3;
+                const size = SEGMENT_SIZE * sizeFactor;
+
+                drawGlowSegment(seg.x, seg.y, size, alphaFactor, i === 0);
+            }
+
+            // Continue animation if loading screen is visible
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
+                requestAnimationFrame(animate);
+            }
+        }
+
+        // Start animation
+        animate();
+    })();
+    </script>
 
     <!-- Guide Modal -->
     <div class="guide-modal" id="guideModal">
