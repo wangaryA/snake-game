@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Snake Game</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -2903,21 +2903,29 @@
 
         /* ===== MOBILE LAYOUT (max-width: 600px) ===== */
         @media (max-width: 600px) {
+            html {
+                height: 100%;
+                overflow: hidden;
+            }
+
             body {
                 padding: 0;
                 min-height: 100vh;
-                min-height: -webkit-fill-available;
+                min-height: calc(var(--vh, 1vh) * 100);
+                height: 100%;
                 overflow-x: hidden;
-            }
-
-            html {
-                height: -webkit-fill-available;
+                overflow-y: auto;
+                align-items: flex-start;
+                justify-content: flex-start;
+                -webkit-overflow-scrolling: touch;
             }
 
             .main-container {
                 padding: 10px;
+                padding-top: 15px;
                 padding-bottom: 220px;
                 min-height: auto;
+                width: 100%;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -3036,8 +3044,7 @@
                 width: 100% !important;
                 height: auto !important;
                 max-width: 90vw;
-                max-height: calc(100vh - 320px);
-                max-height: calc(100dvh - 350px);
+                max-height: calc(var(--vh, 1vh) * 100 - 350px);
             }
 
             /* Hide desktop controls text */
@@ -3123,8 +3130,7 @@
             }
 
             #gameCanvas {
-                max-height: calc(100vh - 320px);
-                max-height: calc(100dvh - 320px);
+                max-height: calc(var(--vh, 1vh) * 100 - 320px);
             }
 
             .help-btn {
@@ -3454,6 +3460,13 @@
     </style>
 </head>
 <body>
+    <script>
+        // Set viewport height variable immediately to prevent layout shift
+        (function() {
+            var vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', vh + 'px');
+        })();
+    </script>
     <!-- Pixel Art Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
         <!-- Scanlines Overlay -->
@@ -6064,6 +6077,29 @@
             window.scrollTo(0, 0);
             init();
         });
+
+        // Fix mobile viewport height issues (browser chrome appearing/disappearing)
+        function fixMobileViewport() {
+            // Set CSS variable for actual viewport height
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+            // Scroll to top to fix layout
+            window.scrollTo(0, 0);
+        }
+
+        // Run on load
+        fixMobileViewport();
+
+        // Run on resize and orientation change
+        window.addEventListener('resize', fixMobileViewport);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(fixMobileViewport, 100);
+        });
+
+        // Use visualViewport API if available (better for mobile)
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', fixMobileViewport);
+        }
 
         // Hide loading screen after everything loads
         window.addEventListener('load', () => {
